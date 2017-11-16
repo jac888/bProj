@@ -26,8 +26,8 @@ namespace BitcoinService
         public string BTCServiceDates = "";
         public string BTCServiceTime = "";
         private string Logtitle = "";
-        public string BaseLogPath = $"{AppDomain.CurrentDomain.BaseDirectory}Log\\BTC Service\\";
-        public string RESTLogPath = $"{AppDomain.CurrentDomain.BaseDirectory}Log\\BTC Service\\REST_TEST\\";
+        public static string BaseLogPath = $"{AppDomain.CurrentDomain.BaseDirectory}Log\\BTC Service\\";
+        public static string RESTLogPath = $"{AppDomain.CurrentDomain.BaseDirectory}Log\\BTC Service\\REST_TEST\\";
         #endregion
 
 
@@ -123,11 +123,60 @@ namespace BitcoinService
         {
             HttpWebRequest req = WebRequest.Create(url) as HttpWebRequest;
             string result = null;
-            using (HttpWebResponse resp = req.GetResponse() as HttpWebResponse)
+            HttpWebResponse response = null;
+            try
             {
-                StreamReader reader = new StreamReader(resp.GetResponseStream());
+                // Creates an HttpWebRequest for the specified URL. 
+                HttpWebRequest myHttpWebRequest = (HttpWebRequest)WebRequest.Create(url);
+                // Sends the HttpWebRequest and waits for a response.
+                HttpWebResponse myHttpWebResponse = (HttpWebResponse)myHttpWebRequest.GetResponse();
+             
+                if (myHttpWebResponse.StatusCode == HttpStatusCode.OK)
+                    Console.WriteLine("\r\nResponse Status Code is OK and StatusDescription is: {0}",myHttpWebResponse.StatusDescription);
+                // Releases the resources of the response.
+                StreamReader reader = new StreamReader(myHttpWebResponse.GetResponseStream());
                 result = reader.ReadToEnd();
+                myHttpWebResponse.Close();
             }
+            catch (WebException e)
+            {
+                response = (HttpWebResponse)e.Response;
+                Logger.Log(RESTLogPath, LogType.Day, "WebException Raised. The following error occured : " + e.Status + " / " + e.Message);    
+            }
+
+            catch (Exception e)
+            {
+                Logger.Log(RESTLogPath, LogType.Day, "The following Exception was raised : " + e.Message);
+            }
+
+            if (response != null)
+            {
+                Stream stream = response.GetResponseStream();
+                StreamReader sr = new StreamReader(stream);
+                result = sr.ReadToEnd();
+                switch (response.StatusCode)
+                {
+                    case HttpStatusCode.OK:
+                        Logger.Log(RESTLogPath, LogType.Day, "\r\n Success : Code : 200" );
+                        //(略)
+                        break;
+                    case HttpStatusCode.BadRequest:
+                        Logger.Log(RESTLogPath, LogType.Day, "\r\n BadRequest : Code : 400");
+                        //(略)
+                        break;
+                    default:
+                        //其他狀態
+                        //(略)
+                        break;
+                }
+                response.Close();
+            }
+
+            //using (HttpWebResponse resp = req.GetResponse() as HttpWebResponse)
+            //{
+            //    StreamReader reader = new StreamReader(resp.GetResponseStream());
+            //    result = reader.ReadToEnd();
+            //}
             return result;
         }
 
@@ -137,7 +186,14 @@ namespace BitcoinService
             var url = DAC.GetString(ConfigurationManager.AppSettings["RestAddrURL"]);
             var DATA = HttpGet(url);
 
-            Logger.Log(RESTLogPath, LogType.Day, "[ Retrived data from Bitcoin API Service ] : ["+ DATA + " ] ");
+            if (DATA != null)
+                Logger.Log(RESTLogPath, LogType.Day, "[ Retrived data from Bitcoin API Service ] : ["+DATA+" ] ");
+            else
+            {
+                Logger.Log(RESTLogPath, LogType.Day, " Web API has problem! ");
+            }
+
+
         }
     }
 }
