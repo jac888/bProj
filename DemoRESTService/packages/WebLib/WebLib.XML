@@ -1,0 +1,2380 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>WebLib</name>
+    </assembly>
+    <members>
+        <member name="T:WebLib.DAC">
+            <summary>
+            資料存取類別的基礎類別
+            </summary>
+        </member>
+        <member name="F:WebLib.DAC.myConn">
+            <summary>
+            是否使用自己的 connection
+            </summary>
+        </member>
+        <member name="F:WebLib.DAC.conn">
+            <summary>
+            Connection 物件的參考
+            </summary>
+        </member>
+        <member name="F:WebLib.DAC.tran">
+            <summary>
+            Transaction 物件的參考，若非 null 就表示使用這個 Transaction 物件來進行資料庫交易
+            </summary>
+        </member>
+        <member name="F:WebLib.DAC.selfTransaction">
+            <summary>
+            是否是自己開始的交易
+            </summary>
+        </member>
+        <member name="F:WebLib.DAC.connTypeOLEDB">
+            <summary>
+            OLEDB 連線類型的常數
+            </summary>
+        </member>
+        <member name="F:WebLib.DAC.connTypeMSSQL">
+            <summary>
+            MSSQL 連線類型的常數
+            </summary>
+        </member>
+        <member name="F:WebLib.DAC.connTypePOSTGRE">
+            <summary>
+            PostgreSQL 連線類型的常數
+            </summary>
+        </member>
+        <member name="F:WebLib.DAC.connTypeORACLE">
+            <summary>
+            PostgreSQL 連線類型的常數
+            </summary>
+        </member>
+        <member name="F:WebLib.DAC.ConnectionType">
+            <summary>
+            連線類型
+            </summary>
+        </member>
+        <member name="F:WebLib.DAC.ConnectionString">
+            <summary>
+            連線字串
+            </summary>
+        </member>
+        <member name="M:WebLib.DAC.#ctor">
+            <summary>
+            預設建構式
+            </summary>
+        </member>
+        <member name="M:WebLib.DAC.#ctor(System.Data.Common.DbConnection)">
+            <summary>
+            建構式
+            </summary>
+            <param name="conn">要使用的 Connection 物件</param>
+        </member>
+        <member name="M:WebLib.DAC.EnsureConnection">
+            <summary>
+            確保 Connection 可以使用
+            </summary>
+        </member>
+        <member name="P:WebLib.DAC.Connection">
+            <summary>
+            資料庫操作時使用的 Connection
+            </summary>
+        </member>
+        <member name="P:WebLib.DAC.Transaction">
+            <summary>
+            做資料庫交易時使用的 Transaction
+            </summary>
+        </member>
+        <member name="P:WebLib.DAC.CurrentUserId">
+            <summary>
+            目前登入的使用者代號，Web 應用程式時從 Session[PublicVariable.UserId] 取，非 Web 應用程式時由 PublicVariable.CurrentUserId 取
+            </summary>
+        </member>
+        <member name="P:WebLib.DAC.CurrentRoleId">
+            <summary>
+            目前登入的使用者群組代號，Web 應用程式時從 Session[PublicVariable.RoleId] 取，非 Web 應用程式時由 PublicVariable.CurrentRoleId 取
+            </summary>
+        </member>
+        <member name="M:WebLib.DAC.NewConnection">
+            <summary>
+            建立一個新的 Connection 物件
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:WebLib.DAC.NewConnection(System.String)">
+            <summary>
+            建立一個新的 Connection 物件
+            </summary>
+            <param name="connectionString">連線字串</param>
+            <returns></returns>
+        </member>
+        <member name="M:WebLib.DAC.NewCommand">
+            <summary>
+            建立一個新的 Command 物件
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:WebLib.DAC.NewCommand(System.String)">
+            <summary>
+            建立一個新的 Command 物件
+            </summary>
+            <param name="commandText">CommandText</param>
+            <returns></returns>
+        </member>
+        <member name="M:WebLib.DAC.NewDataAdapter">
+            <summary>
+            建立一個新的 DataAdapter 物件
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:WebLib.DAC.NewDataAdapter(System.Data.Common.DbCommand)">
+            <summary>
+            建立一個新的 DataAdapter 物件
+            </summary>
+            <param name="selectCommand">用來擷取資料的 Command 物件</param>
+            <returns></returns>
+        </member>
+        <member name="M:WebLib.DAC.NewCommandBuilder">
+            <summary>
+            建立一個新的 CommandBuilder 物件
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:WebLib.DAC.NewConnectionStringBuilder">
+            <summary>
+            建立一個新的 ConnectionStringBuilder 物件
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:WebLib.DAC.NewParameter(System.String,System.Object)">
+            <summary>
+            建立一個新的 Parameter 物件
+            </summary>
+            <param name="parameterName">參數名稱</param>
+            <param name="value">餐數值</param>
+            <returns></returns>
+        </member>
+        <member name="M:WebLib.DAC.NewTransactionScope">
+            <summary>
+            建立一個新的 TransactionScope 物件，並設定交易超時為 30 秒
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:WebLib.DAC.OpenConnection">
+            <summary>
+            開啟資料庫連接
+            </summary>
+        </member>
+        <member name="M:WebLib.DAC.CloseConnection(System.Boolean)">
+            <summary>
+            關閉資料庫連接
+            </summary>
+        </member>
+        <member name="M:WebLib.DAC.Select(System.Data.Common.DbCommand)">
+            <summary>
+            執行 SELECT SQL，用 DataTable 回傳查詢結果
+            </summary>
+            <param name="cmd"></param>
+            <returns></returns>
+        </member>
+        <member name="M:WebLib.DAC.Select(System.Data.Common.DbCommand,WebLib.IDataList@)">
+            <summary>
+            執行 SELECT SQL，填入指定的 IDataList 執行個體
+            </summary>
+        </member>
+        <member name="M:WebLib.DAC.AddParam(System.Data.Common.DbCommand,System.String,System.String)">
+            <summary>
+            把參數以及參數值加入 DbCommand.Parameters
+            </summary>
+        </member>
+        <member name="M:WebLib.DAC.AddParam(System.Data.Common.DbCommand,System.String,System.DateTime)">
+            <summary>
+            把參數以及參數值加入 DbCommand.Parameters
+            </summary>
+        </member>
+        <member name="M:WebLib.DAC.AddParam(System.Data.Common.DbCommand,System.String,System.Boolean)">
+            <summary>
+            把參數以及參數值加入 DbCommand.Parameters
+            </summary>
+        </member>
+        <member name="M:WebLib.DAC.AddParam(System.Data.Common.DbCommand,System.String,System.Int32)">
+            <summary>
+            把參數以及參數值加入 DbCommand.Parameters
+            </summary>
+        </member>
+        <member name="M:WebLib.DAC.AddParam(System.Data.Common.DbCommand,System.String,System.Int16)">
+            <summary>
+            把參數以及參數值加入 DbCommand.Parameters
+            </summary>
+        </member>
+        <member name="M:WebLib.DAC.AddParam(System.Data.Common.DbCommand,System.String,System.Double)">
+            <summary>
+            把參數以及參數值加入 DbCommand.Parameters
+            </summary>
+        </member>
+        <member name="M:WebLib.DAC.AddParam(System.Data.Common.DbCommand,System.String,System.Object)">
+            <summary>
+            把參數以及參數值加入 DbCommand.Parameters
+            </summary>
+        </member>
+        <member name="M:WebLib.DAC.ExecuteScalar(System.Data.Common.DbCommand,System.Object@)">
+            <summary>
+            執行 SELECT SQL，傳回第一筆資料的第一個欄位值
+            </summary>
+        </member>
+        <member name="M:WebLib.DAC.ExecuteScalar``1(System.Data.Common.DbCommand,``0@)">
+            <summary>
+            執行 SELECT SQL，傳回第一筆資料的第一個欄位值
+            </summary>
+        </member>
+        <member name="M:WebLib.DAC.ExecuteScalar``1(System.String,``0@)">
+            <summary>
+            執行 SELECT SQL，傳回第一筆資料的第一個欄位值
+            </summary>
+        </member>
+        <member name="M:WebLib.DAC.ExecuteScalar(System.Data.Common.DbCommand,System.Int32@)">
+            <summary>
+            執行 SELECT SQL，傳回第一筆資料的第一個欄位值
+            </summary>
+        </member>
+        <member name="M:WebLib.DAC.ExecuteScalar(System.Data.Common.DbCommand,System.String@)">
+            <summary>
+            執行 SELECT SQL，傳回第一筆資料的第一個欄位值
+            </summary>
+        </member>
+        <member name="M:WebLib.DAC.ExecuteScalar(System.Data.Common.DbCommand,System.DateTime@)">
+            <summary>
+            執行 SELECT SQL，傳回第一筆資料的第一個欄位值
+            </summary>
+        </member>
+        <member name="M:WebLib.DAC.ExecuteScalar(System.Data.Common.DbCommand,System.Double@)">
+            <summary>
+            執行 SELECT SQL，傳回第一筆資料的第一個欄位值
+            </summary>
+        </member>
+        <member name="M:WebLib.DAC.ExecuteScalar(System.Data.Common.DbCommand,System.Decimal@)">
+            <summary>
+            執行 SELECT SQL，傳回第一筆資料的第一個欄位值
+            </summary>
+        </member>
+        <member name="M:WebLib.DAC.StartTransaction">
+            <summary>
+            啟動一個交易
+            </summary>
+        </member>
+        <member name="M:WebLib.DAC.CommitTransaction">
+            <summary>
+            認可一個交易
+            </summary>
+        </member>
+        <member name="M:WebLib.DAC.RollbackTransaction">
+            <summary>
+            駁回一個交易
+            </summary>
+        </member>
+        <member name="M:WebLib.DAC.ExecuteNonQuery(System.Data.Common.DbCommand)">
+            <summary>
+            執行非 SELECT 的 SQL 敘述
+            </summary>
+        </member>
+        <member name="M:WebLib.DAC.ExecuteNonQueryBulk(System.Data.Common.DbCommand)">
+            <summary>
+            執行非 SELECT 的 SQL 敘述，用於迴圈中大量執行之用
+            </summary>
+        </member>
+        <member name="M:WebLib.DAC.ExecuteReader(System.Data.Common.DbCommand,System.Boolean@)">
+            <summary>
+            執行 SELECT 的 SQL 敘述，並回傳 IDataReader 物件 呼叫後請檢查 wantClose 引數，若為 true，請執行 CloseConnection(wantClose);
+            </summary>
+        </member>
+        <member name="M:WebLib.DAC.SelectForDropDown(System.String,System.String,System.Object)">
+            <summary>
+            回傳供 DropDownList 或是 ListBox 使用的資料
+            </summary>
+            <param name="sql">擷取資料用的 SQL 敘述，例如 SELECT value, name FROM Table_1</param>
+            <param name="emptyText">空選項的顯示文字，如果傳入 null 或是空字串，就不加入空選項</param>
+            <param name="emptyValue">空選項代表的值</param>
+            <returns></returns>
+        </member>
+        <member name="M:WebLib.DAC.SelectForDropDown(System.Data.Common.DbCommand,System.String,System.Object)">
+            <summary>
+            回傳供 DropDownList 或是 ListBox 使用的資料
+            </summary>
+            <param name="cmd">擷取資料用的 DbCommand 物件</param>
+            <param name="emptyText">空選項的顯示文字，如果傳入 null 或是空字串，就不加入空選項</param>
+            <param name="emptyValue">空選項代表的值</param>
+            <returns></returns>
+        </member>
+        <member name="M:WebLib.DAC.Next單號(System.DateTime,System.String,System.String,System.String,System.String,System.String,System.String)">
+            <summary>
+            依照指定的 pattern 取得下一個單號
+            </summary>
+            <param name="RenDate">單號的日期，如果 mask 引數中指定的 pattern 與日期無關，請傳入一個任意的日期</param>
+            <param name="TableName">要取得單號的資料表名稱</param>
+            <param name="FieldName">要取得單號的欄位名稱</param>
+            <param name="Mask">
+            <para>單號的 pattern，可用的元素有：</para>
+            <para>y 或 Y = 西元年，yyyy 或是 YYYY 代表西元年 4 位</para>
+            <para>c 或 C = 民國年，ccc 或是 CCC 代表民國年 3 位</para>
+            <para>m 或 M = 月，mm 或是 MM 代表月份 2 位</para>
+            <para>d 或 D = 日，dd 或是 DD 代表日期 2 位</para>
+            <para>用單引號(')或雙引號(")包裹起來的是固定文字</para>
+            <para>用&lt;與&gt;包裹起來的是流水號</para>
+            <para>例一：YYYYMM&lt;999999&gt; 表示西元年 4 位 + 月份 2 位 + 流水號 6 位</para>
+            <para>例二："TR"YYYYMM&lt;999999&gt; 表示 "TR" + 西元年 4 位 + 月份 2 位 + 流水號 6 位</para>
+            </param>
+            <param name="WhereKey">取單號時額外的 where 條件</param>
+            <param name="serialMin">最小序號</param>
+            <param name="serialMax">最大序號</param>
+            <returns></returns>
+        </member>
+        <member name="M:WebLib.DAC.AddNum(System.String@,System.String)">
+            <summary>
+            流水號 + 1
+            </summary>
+            <param name="oldString">流水號</param>
+            <param name="format">流水號格式</param>
+            <returns>是否 + 1 成功</returns>
+        </member>
+        <member name="M:WebLib.DAC.GetString(System.Object)">
+            <summary>
+            轉換為字串
+            </summary>
+            <param name="o"></param>
+            <returns></returns>
+        </member>
+        <member name="M:WebLib.DAC.GetInt32(System.Object)">
+            <summary>
+            轉換為 Int32
+            </summary>
+            <param name="o"></param>
+            <returns></returns>
+        </member>
+        <member name="M:WebLib.DAC.GetInt32Nullable(System.Object)">
+            <summary>
+            轉換為 Int32?
+            </summary>
+            <param name="o"></param>
+            <returns></returns>
+        </member>
+        <member name="M:WebLib.DAC.GetInt64(System.Object)">
+            <summary>
+            轉換為 Int64
+            </summary>
+            <param name="o"></param>
+            <returns></returns>
+        </member>
+        <member name="M:WebLib.DAC.GetInt64Nullable(System.Object)">
+            <summary>
+            轉換為 Int64?
+            </summary>
+            <param name="o"></param>
+            <returns></returns>
+        </member>
+        <member name="M:WebLib.DAC.GetInt16(System.Object)">
+            <summary>
+            轉換為 Int16
+            </summary>
+            <param name="o"></param>
+            <returns></returns>
+        </member>
+        <member name="M:WebLib.DAC.GetInt16Nullable(System.Object)">
+            <summary>
+            轉換為 Int16?
+            </summary>
+            <param name="o"></param>
+            <returns></returns>
+        </member>
+        <member name="M:WebLib.DAC.GetDouble(System.Object)">
+            <summary>
+            轉換為 double
+            </summary>
+            <param name="o"></param>
+            <returns></returns>
+        </member>
+        <member name="M:WebLib.DAC.GetDoubleNullable(System.Object)">
+            <summary>
+            轉換為 double?
+            </summary>
+            <param name="o"></param>
+            <returns></returns>
+        </member>
+        <member name="M:WebLib.DAC.GetDateTime(System.Object)">
+            <summary>
+            轉換為 DateTime
+            </summary>
+            <param name="o"></param>
+            <returns></returns>
+        </member>
+        <member name="M:WebLib.DAC.GetDateTimeNullable(System.Object)">
+            <summary>
+            轉換為 DateTime?
+            </summary>
+            <param name="o"></param>
+            <returns></returns>
+        </member>
+        <member name="M:WebLib.DAC.GetBoolean(System.Object)">
+            <summary>
+            轉換為 bool
+            </summary>
+            <param name="o"></param>
+            <returns></returns>
+        </member>
+        <member name="M:WebLib.DAC.GetBooleanNullable(System.Object)">
+            <summary>
+            轉換為 bool?
+            </summary>
+            <param name="o"></param>
+            <returns></returns>
+        </member>
+        <member name="M:WebLib.DAC.GetByte(System.Object)">
+            <summary>
+            轉換為 byte
+            </summary>
+            <param name="o"></param>
+            <returns></returns>
+        </member>
+        <member name="M:WebLib.DAC.GetDecimal(System.Object)">
+            <summary>
+            轉換為 decimal
+            </summary>
+            <param name="o"></param>
+            <returns></returns>
+        </member>
+        <member name="M:WebLib.DAC.GetDecimalNullable(System.Object)">
+            <summary>
+            轉換為 decimal?
+            </summary>
+            <param name="o"></param>
+            <returns></returns>
+        </member>
+        <member name="M:WebLib.DAC.GetGuid(System.Object)">
+            <summary>
+            轉換為 Guid
+            </summary>
+            <param name="o"></param>
+            <returns></returns>
+        </member>
+        <member name="M:WebLib.DAC.GetGuidNullable(System.Object)">
+            <summary>
+            轉換為 Guid?
+            </summary>
+            <param name="o"></param>
+            <returns></returns>
+        </member>
+        <member name="M:WebLib.DAC.CompareDataItemValue(System.Object,System.Object,System.String[])">
+            <summary>
+            比較兩個資料物件是否內容一致
+            </summary>
+            <param name="value1">比較物件一</param>
+            <param name="value2">比較物件二</param>
+            <param name="compareFields">要比較的屬性，若不傳入或是傳入 null 表示比較全部屬性</param>
+            <returns></returns>
+        </member>
+        <member name="M:WebLib.DAC.GetExistProps``1(System.Data.IDataReader)">
+            <summary>
+            取得 T 的屬性在 reader 欄位的列表，以便之後使用，避免每次都 GetProperty 浪費時間
+            </summary>
+        </member>
+        <member name="M:WebLib.DAC.FillData``1(System.Data.IDataReader)">
+            <summary>
+            填入資料
+            </summary>
+            <typeparam name="T">代表資料錄的型別</typeparam>
+            <param name="reader"></param>
+        </member>
+        <member name="M:WebLib.DAC.FillData``1(System.Data.IDataReader,System.Collections.Generic.List{``0})">
+            <summary>
+            填入資料
+            </summary>
+            <typeparam name="T">代表資料錄的型別</typeparam>
+            <param name="reader"></param>
+            <param name="dataList">要填入的資料集合</param>
+        </member>
+        <member name="M:WebLib.DAC.FillFirstColumn``1(System.Data.IDataReader,System.Collections.Generic.List{``0})">
+            <summary>
+            填入第一個欄位資料
+            </summary>
+            <typeparam name="T">第一個欄位的型別</typeparam>
+            <param name="reader"></param>
+            <param name="dataList">要填入的資料集合</param>
+        </member>
+        <member name="M:WebLib.DAC.Select``1(System.Data.Common.DbCommand)">
+            <summary>
+            將 cmd 擷取的資料填入 List&lt;T&gt;
+            </summary>
+            <typeparam name="T">要填入的資料紀錄類別</typeparam>
+            <param name="cmd">擷取資料的 cmd 物件</param>
+            <returns>T 的 List，表示取回的資料</returns>
+        </member>
+        <member name="M:WebLib.DAC.SelectFirstColumn``1(System.Data.Common.DbCommand)">
+            <summary>
+            將 cmd 擷取的資料第一個欄位填入 List&lt;T&gt;
+            </summary>
+            <typeparam name="T">第一個欄位的資料類別</typeparam>
+            <param name="cmd">擷取資料的 cmd 物件</param>
+            <returns>T 的 List，表示取回的資料</returns>
+        </member>
+        <member name="M:WebLib.DAC.Main(System.String[])">
+            <summary>
+            測試主程式
+            </summary>
+            <param name="args"></param>
+        </member>
+        <member name="M:WebLib.DAC.Dispose">
+            <summary>
+            關閉資料庫並釋放資源
+            </summary>
+        </member>
+        <member name="T:WebLib.IDataList">
+            <summary>
+            資料集合介面
+            </summary>
+        </member>
+        <member name="M:WebLib.IDataList.Fill(System.Data.Common.DbDataReader)">
+            <summary>
+            由 DataReader 填入資料
+            </summary>
+            <param name="reader"></param>
+        </member>
+        <member name="T:WebLib.Data.DataErrorException">
+            <summary>
+            資料庫動作的例外
+            </summary>
+        </member>
+        <member name="M:WebLib.Data.DataErrorException.#ctor">
+            <summary>
+            建立新的 DataErrorException 物件
+            </summary>
+        </member>
+        <member name="M:WebLib.Data.DataErrorException.#ctor(System.String)">
+            <summary>
+            建立新的 DataErrorException 物件
+            </summary>
+            <param name="message">錯誤訊息</param>
+        </member>
+        <member name="M:WebLib.Data.DataErrorException.#ctor(System.String,System.Exception)">
+            <summary>
+            建立新的 DataErrorException 物件
+            </summary>
+            <param name="message">錯誤訊息</param>
+            <param name="innerException">內嵌的例外物件</param>
+        </member>
+        <member name="T:WebLib.DataItemBase">
+            <summary>
+            資料項目類別的基礎類別
+            </summary>
+        </member>
+        <member name="M:WebLib.DataItemBase.#ctor">
+            <summary>
+            建構
+            </summary>
+        </member>
+        <member name="E:WebLib.DataItemBase.PropertyChanged">
+            <summary>
+            屬性值變化時會觸發的事件
+            </summary>
+        </member>
+        <member name="M:WebLib.DataItemBase.OnPropertyChanged(System.String)">
+            <summary>
+            屬性值發生變化
+            </summary>
+            <param name="info"></param>
+        </member>
+        <member name="P:WebLib.DataItemBase.IsValid">
+            <summary>
+            呼叫 ValidateDataItem 之後，是否驗證不通過
+            </summary>
+        </member>
+        <member name="P:WebLib.DataItemBase.IsDoValidation">
+            <summary>
+            是否執行資料驗證
+            </summary>
+        </member>
+        <member name="P:WebLib.DataItemBase.ValidationErrors">
+            <summary>
+            呼叫 ValidateDataItem 之後，驗證不通過的訊息集合，包含每一個驗證不通過的項目
+            </summary>
+        </member>
+        <member name="P:WebLib.DataItemBase.ValidationErrorMessage">
+            <summary>
+            呼叫 ValidateDataItem 之後，驗證不通過的訊息，用<br/>連接起來       
+            </summary>
+        </member>
+        <member name="M:WebLib.DataItemBase.Validate(System.String)">
+            <summary>
+            驗證資料物件
+            </summary>
+            <param name="errorMessageFormatString">錯誤訊息的格式化字串 {0}=屬性顯示名稱 {1}=驗證錯誤訊息，空白表示使用預設的格式化字串</param>
+            <returns></returns>        
+        </member>
+        <member name="M:WebLib.DataItemBase.GetDisplayName(System.Type,System.String)">
+            <summary>
+            取資料物件成員的 DisplayName 屬性，如果沒有 DisplayName 屬性，則回傳成員名稱
+            </summary>
+            <param name="type"></param>
+            <param name="propertyName"></param>
+        </member>
+        <member name="P:WebLib.DataItemBase.DB_APPNO">
+            <summary>
+            資料記錄版本號
+            </summary>
+        </member>
+        <member name="P:WebLib.DataItemBase.DB_CRDAT">
+            <summary>
+            建檔日期
+            </summary>
+        </member>
+        <member name="P:WebLib.DataItemBase.DB_CRUSR">
+            <summary>
+            建檔人員
+            </summary>
+        </member>
+        <member name="P:WebLib.DataItemBase.DB_TRDAT">
+            <summary>
+            最後修改日期
+            </summary>
+        </member>
+        <member name="P:WebLib.DataItemBase.DB_TRUSR">
+            <summary>
+            最後修改人員
+            </summary>
+        </member>
+        <member name="F:WebLib.DataItemBase.daoRelation">
+            <summary>
+            用來取得關聯欄位值的 DAC 物件
+            </summary>
+        </member>
+        <member name="F:WebLib.DataItemBase.relationGet">
+            <summary>
+            儲存哪些關聯欄位已經取過值
+            </summary>
+        </member>
+        <member name="M:WebLib.DataItemBase.SetRelationGet(System.String)">
+            <summary>
+            設定關聯欄位已取過值
+            </summary>
+            <param name="fieldName"></param>
+        </member>
+        <member name="M:WebLib.DataItemBase.ClearRelationCache">
+            <summary>
+            清除關聯欄位已取值旗標
+            </summary>
+        </member>
+        <member name="M:WebLib.DataItemBase.RelationGet(System.String)">
+            <summary>
+            是否關聯欄位已經取過值
+            </summary>
+            <param name="fieldName"></param>
+            <returns></returns>
+        </member>
+        <member name="P:WebLib.DataItemBase.Changed">
+            <summary>
+            自從 Fill 或是上次呼叫 ConfirmChange() 之後，屬性值是否有修改過
+            </summary>
+        </member>
+        <member name="M:WebLib.DataItemBase.ConfirmChange">
+            <summary>
+            清除屬性值修改旗標
+            </summary>
+        </member>
+        <member name="T:WebLib.ValidateErrorItem">
+            <summary>
+            驗證不通過錯誤訊息
+            </summary>
+        </member>
+        <member name="P:WebLib.ValidateErrorItem.PropertyName">
+            <summary>
+            驗證不通過的屬性名稱
+            </summary>
+        </member>
+        <member name="P:WebLib.ValidateErrorItem.DisplayName">
+            <summary>
+            屬性名稱的顯示文字
+            </summary>
+        </member>
+        <member name="P:WebLib.ValidateErrorItem.ErrorMessage">
+            <summary>
+            驗證不通過的錯誤訊息
+            </summary>
+        </member>
+        <member name="P:WebLib.ValidateErrorItem.FormatedErrorMessage">
+            <summary>
+            格式化之後的錯誤訊息
+            </summary>
+        </member>
+        <member name="T:WebLib.NameValueList">
+            <summary>
+            儲存 Name 與 Value 對應的 List
+            </summary>
+        </member>
+        <member name="M:WebLib.NameValueList.Add(System.String,System.Object)">
+            <summary>
+            加入一個項目
+            </summary>
+            <param name="name">Name</param>
+            <param name="value">Value</param>
+        </member>
+        <member name="P:WebLib.NameValueList.Item(System.String)">
+            <summary>
+            由 name 取得 value
+            </summary>
+        </member>
+        <member name="M:WebLib.NameValueList.GetName(System.Object)">
+            <summary>
+            由 value 取得 name
+            </summary>
+        </member>
+        <member name="M:WebLib.NameValueList.Fill(System.Data.Common.DbDataReader)">
+            <summary>
+            由 DataReader 填入內容，第一個 column 是 Value，第二個 column 是 Name
+            </summary>
+            <param name="reader">資料來源 DataReader</param>
+        </member>
+        <member name="M:WebLib.NameValueList.Fill(System.Data.DataTable,System.String,System.String,System.Boolean)">
+            <summary>
+            由 DataTable 填入內容
+            </summary>
+            <param name="dt">資料來源 DataTable</param>
+            <param name="nameField">要填入 Name 的 column</param>
+            <param name="valueField">要填入 Value 的 column</param>
+            <param name="clear">是否要先清除再填入內容</param>
+        </member>
+        <member name="M:WebLib.NameValueList.Fill(System.Data.IDataReader,System.Int32,System.Int32,System.Boolean)">
+            <summary>
+            由 DataReader 填入內容
+            </summary>
+            <param name="reader">資料來源 DataReader</param>
+            <param name="nameIndex">指定第幾個 column 要填入 Name</param>
+            <param name="valueIndex">指定第幾個 column 要填入 Value</param>
+            <param name="clear">是否要先清除再填入內容</param>
+        </member>
+        <member name="M:WebLib.NameValueList.NameExists(System.String)">
+            <summary>
+            檢查 Name 是否存在
+            </summary>
+            <param name="Name"></param>
+            <returns></returns>
+        </member>
+        <member name="M:WebLib.NameValueList.ValueExists(System.Object)">
+            <summary>
+            檢查 Value 是否存在
+            </summary>
+            <param name="Value"></param>
+            <returns></returns>
+        </member>
+        <member name="T:WebLib.NameValueItem">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:WebLib.NameValueItem.Name">
+            <summary>
+            Name
+            </summary>
+        </member>
+        <member name="P:WebLib.NameValueItem.Value">
+            <summary>
+            Value
+            </summary>
+        </member>
+        <member name="T:WebLib.PictureProcess">
+            <summary>
+            圖形處理
+            </summary>
+        </member>
+        <member name="M:WebLib.PictureProcess.縮圖(System.IO.Stream,System.Int32,System.Int32)">
+            <summary>
+            處理縮圖
+            </summary>
+            <param name="Source">來源圖片</param>
+            <param name="MaxWidth">最大高度</param>
+            <param name="MaxHeight">最大寬度</param>
+            <returns></returns>
+        </member>
+        <member name="M:WebLib.PictureProcess.銳化(System.Drawing.Bitmap,System.Single)">
+            <summary>
+            锐化
+            </summary>
+            <param name="b">原始Bitmap</param>
+            <param name="val">锐化程度。取值[0,1]。值越大锐化程度越高</param>
+            <returns>锐化后的图像</returns>
+        </member>
+        <member name="T:WebLib.LookupList">
+            <summary>
+            使用 Lookup List 配置檔的內容，產生 SQL 以 Lookup List HTML 這個類別是採用 Singleton 模式，應使用 GetInstance()
+            取得執行個體，不可以 new
+            </summary>
+        </member>
+        <member name="M:WebLib.LookupList.GetInstance">
+            <summary>
+            取得 LookupList 的執行個體
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="P:WebLib.LookupList.LookupConfigName">
+            <summary>
+            指定配置檔的檔案名稱
+            </summary>
+        </member>
+        <member name="M:WebLib.LookupList.GetLookupSQL">
+            <summary>
+            取得 Lookup 清單要用的 SQL
+            </summary>
+            <returns>SQL 敘述</returns>
+        </member>
+        <member name="M:WebLib.LookupList.GetRetrieveSQL">
+            <summary>
+            取得抓某個值用 SQL
+            </summary>
+            <returns>SQL 敘述</returns>
+        </member>
+        <member name="M:WebLib.LookupList.GetListSQL">
+            <summary>
+            取得 Dropdown 清單資料用的 SQL
+            </summary>
+            <returns>SQL 敘述</returns>
+        </member>
+        <member name="M:WebLib.LookupList.GetKeyFields">
+            <summary>
+            取得搜尋用的鍵值欄位陣列
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:WebLib.LookupList.GetLookupJSON(System.Data.DataTable,System.String)">
+            <summary>
+            取得下拉資料物件的 JSON 表示法字串
+            </summary>
+            <param name="table">儲存下拉清單資料的 Dataset</param>
+            <returns>儲存下拉資料物件的 JSON 表示法字串</returns>
+        </member>
+        <member name="M:WebLib.LookupList.GetLookupConfig(System.String)">
+            <summary>
+            讀取 Lookup List 配置檔，取得 configName 指定的資料
+            </summary>
+            <param name="configName">要取得的 name</param>
+        </member>
+        <member name="T:WebLib.LookupConfig">
+            <summary>
+            </summary>
+        </member>
+        <member name="T:WebLib.WLookupConfigs">
+            <summary>
+            </summary>
+        </member>
+        <member name="T:WebLib.WLookupAppearence">
+            <summary>
+            </summary>
+        </member>
+        <member name="T:WebLib.Xml">
+            <summary>
+            簡單的 XML 操作函數
+            </summary>
+        </member>
+        <member name="M:WebLib.Xml.OpenXml(System.String,System.Xml.XmlDocument@,System.Xml.XmlElement@)">
+            <summary>
+            開啟並載入 XML 檔案
+            </summary>
+            <param name="xmlFilename">XML 檔案名稱</param>
+            <param name="document">要承接 XML 內容的 XmlDocument 物件參考</param>
+            <param name="rootElement">XML 根節點的物件參考</param>
+            <exception cref="T:System.IO.FileNotFoundException">欲開啟的檔案不存在</exception>
+            <exception cref="T:System.Net.WebException">遠端檔案找不到 或 存取錯誤</exception>
+            <exception cref="T:System.InvalidOperationException">檔案名稱是空字串</exception>
+            <exception cref="T:System.IO.DirectoryNotFoundException">欲開啟的檔案路徑中的目錄不存在</exception>
+            <exception cref="T:System.UriFormatException">URI 格式錯誤</exception>
+        </member>
+        <member name="M:WebLib.Xml.SaveXml(System.String,System.Xml.XmlDocument)">
+            <summary>
+            XML 存檔
+            </summary>
+            <param name="filename">XML 檔案名稱</param>
+            <param name="document">存有 XML 內容的 XmlDocument 物件</param>
+        </member>
+        <member name="M:WebLib.Xml.GetAttrValue(System.Xml.XmlNode,System.String)">
+            <summary>
+            取得 XML 節點中的屬性值
+            </summary>
+            <param name="aNode">XML 節點</param>
+            <param name="attrName">要取值的屬性名稱。找不到屬性時，會觸發例外</param>
+            <returns>取得的屬性值</returns>
+        </member>
+        <member name="M:WebLib.Xml.GetAttrValueDef(System.Xml.XmlNode,System.String,System.String)">
+            <summary>
+            取得 XML 節點中的屬性值
+            </summary>
+            <param name="aNode">XML 節點</param>
+            <param name="attrName">要取值的屬性名稱</param>
+            <param name="defaultValue">找不到屬性時的回傳值</param>
+            <returns>取得的屬性值</returns>
+        </member>
+        <member name="M:WebLib.Xml.GetAttrValueNull(System.Xml.XmlNode,System.String)">
+            <summary>
+            取得 XML 節點中的屬性值
+            </summary>
+            <param name="aNode">XML 節點</param>
+            <param name="attrName">要取值的屬性名稱。找不到屬性時，會回傳空字串</param>
+            <returns>取得的屬性值</returns>
+        </member>
+        <member name="M:WebLib.Xml.SetAttrValue(System.Xml.XmlElement,System.String,System.String)">
+            <summary>
+            設定 XML 節點中的屬性值
+            </summary>
+            <param name="aNode">XML 節點</param>
+            <param name="attrName">要設定的屬性名稱</param>
+            <param name="value">要設定的屬性值</param>
+        </member>
+        <member name="T:WebLib.TxtImport">
+            <summary>
+            文字檔匯入的基礎類別
+            </summary>
+        </member>
+        <member name="P:WebLib.TxtImport.Encoding">
+            <summary>
+            輸入檔案的編碼 (預設值為 UTF-8)
+            </summary>
+        </member>
+        <member name="P:WebLib.TxtImport.DataBeginLineNo">
+            <summary>
+            開始導入的行數，從 0 開始計算 (預設值為 0)
+            </summary>
+        </member>
+        <member name="P:WebLib.TxtImport.ColumnNameLineNo">
+            <summary>
+            欄位名稱所在的行數，從 0 開始計算，若給定 -1 表示沒有欄位名稱行數 (預設值為 -1)
+            </summary>
+        </member>
+        <member name="P:WebLib.TxtImport.Separators">
+            <summary>
+            欄位分隔字串
+            </summary>
+        </member>
+        <member name="P:WebLib.TxtImport.RemoveStrings">
+            <summary>
+            欄位中要移除的字串
+            </summary>
+        </member>
+        <member name="P:WebLib.TxtImport.InputFileName">
+            <summary>
+            輸入檔案名稱
+            </summary>
+        </member>
+        <member name="M:WebLib.TxtImport.#ctor">
+            <summary>
+            建構式
+            </summary>
+        </member>
+        <member name="M:WebLib.TxtImport.Execute">
+            <summary>
+            執行匯入，將資料存入 DataTable 回傳
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:WebLib.TxtImport.ReadOneLine(System.Int32)">
+            <summary>
+            解析一行輸入，拆成各個欄位
+            </summary>
+        </member>
+        <member name="M:WebLib.TxtImport.CreateOutputColumns(System.Data.DataTable)">
+            <summary>
+            建立輸出 DataTable 的欄位
+            </summary>
+        </member>
+        <member name="M:WebLib.TxtImport.Main(System.String[])">
+            <summary>
+            測試用主程式
+            </summary>
+        </member>
+        <member name="T:WebLib.PublicVariable">
+            <summary>
+            公用變數
+            </summary>
+        </member>
+        <member name="F:WebLib.PublicVariable.UserId">
+            <summary>
+            存放登入使用者代號的 Session 變數名稱
+            </summary>
+        </member>
+        <member name="F:WebLib.PublicVariable.UserName">
+            <summary>
+            存放登入使用者姓名的 Session 變數名稱
+            </summary>
+        </member>
+        <member name="F:WebLib.PublicVariable.RoleId">
+            <summary>
+            存放登入使用者角色（群組）清單的 Session 變數名稱
+            </summary>
+        </member>
+        <member name="F:WebLib.PublicVariable.CurrentUserId">
+            <summary>
+            用於非 Web 程式，用來存放目前登入的使用者代號
+            </summary>
+        </member>
+        <member name="F:WebLib.PublicVariable.CurrentRoleId">
+            <summary>
+            用於非 Web 程式，用來存放目前登入的使用者角色(群組)清單
+            </summary>
+        </member>
+        <member name="F:WebLib.PublicVariable.CompanyName">
+            <summary>
+            公司名稱
+            </summary>
+        </member>
+        <member name="F:WebLib.PublicVariable.CopyrightText">
+            <summary>
+            版權宣告文字
+            </summary>
+        </member>
+        <member name="F:WebLib.PublicVariable.ConnectionString">
+            <summary>
+            資料庫連接字串
+            </summary>
+        </member>
+        <member name="F:WebLib.PublicVariable.UserLanguage">
+            <summary>
+            UI 語言
+            </summary>
+        </member>
+        <member name="F:WebLib.PublicVariable.Theme">
+            <summary>
+            佈景主題名稱
+            </summary>
+        </member>
+        <member name="P:WebLib.PublicVariable.CY11">
+            <summary>
+            取得目前日曆與西元年的年差，例如民國年日曆就回傳 1911
+            </summary>
+        </member>
+        <member name="P:WebLib.PublicVariable.TaiwanCulture">
+            <summary>
+            台灣地區的文化特性描述
+            </summary>
+        </member>
+        <member name="F:WebLib.Excel.NewLine">
+            <summary>
+            儲存格內換行字元
+            </summary>
+        </member>
+        <member name="M:WebLib.Excel.Cell(System.Int32,System.Int32)">
+            <summary>
+            建立或取得指定行列的儲存格
+            </summary>
+            <param name="row">列</param>
+            <param name="col">行</param>
+            <returns></returns>
+        </member>
+        <member name="M:WebLib.Excel.CellValueToString(System.Int32,System.Int32)">
+            <summary>
+            將指定行列的儲存格強制轉換為文字
+            </summary>
+            <param name="row">列</param>
+            <param name="col">行</param>
+            <returns></returns>
+        </member>
+        <member name="M:WebLib.Excel.ColtoABC(System.Int32)">
+            <summary>
+            將 column id 轉換成 Excel 的欄名
+            </summary>
+            <param name="col"></param>
+            <returns></returns>
+        </member>
+        <member name="M:WebLib.Excel.RCtoA1(System.Int32,System.Int32)">
+            <summary>
+            從 row, col 轉換為 "A1" 這樣的表示法，給寫公式時用的
+            </summary>
+            <param name="row">列</param>
+            <param name="col">行</param>
+        </member>
+        <member name="M:WebLib.Excel.NewFont(System.String)">
+            <summary>
+            建立新字體，預設大小是 9pt
+            </summary>
+            <param name="fontName">字體名稱</param>
+        </member>
+        <member name="M:WebLib.Excel.NewFont(System.String,System.Int16)">
+            <summary>
+            建立新字體
+            </summary>
+            <param name="fontName">字體名稱</param>
+            <param name="fontSize">大小</param>
+        </member>
+        <member name="M:WebLib.Excel.NewFont(System.String,System.Int16,NPOI.SS.UserModel.FontBoldWeight)">
+            <summary>
+            建立新字體
+            </summary>
+            <param name="fontName">字體名稱</param>
+            <param name="fontSize">大小</param>
+            <param name="fontWeight">粗細</param>
+        </member>
+        <member name="M:WebLib.Excel.NewFont(System.String,System.Int16,NPOI.SS.UserModel.FontBoldWeight,System.Int16)">
+            <summary>
+            建立新字體
+            </summary>
+            <param name="fontName">字體名稱</param>
+            <param name="fontSize">大小</param>
+            <param name="fontWeight">粗細</param>
+            <param name="color">顏色</param>
+        </member>
+        <member name="M:WebLib.Excel.NewCellStyle(NPOI.SS.UserModel.IFont,NPOI.SS.UserModel.HorizontalAlignment,NPOI.SS.UserModel.VerticalAlignment,System.Boolean)">
+            <summary>
+            建立新樣式
+            </summary>
+            <param name="font">字體</param>
+            <param name="align">左右對齊</param>
+            <param name="valign">垂直對齊</param>
+            <param name="warpText">是否自動換行</param>
+        </member>
+        <member name="M:WebLib.Excel.MergeCell(System.Int32,System.Int32,System.Int32,System.Int32)">
+            <summary>
+            合併 (row1, col1) 到 (row2, col2) 範圍的儲存格
+            </summary>
+        </member>
+        <member name="M:WebLib.Excel.MergeCell(System.Int32,System.Int32,System.Int32,System.Int32,NPOI.SS.UserModel.BorderStyle)">
+            <summary>
+            合併 (row1, col1) 到 (row2, col2) 範圍的儲存格，並設定合併後的外圍邊框樣式
+            </summary>
+        </member>
+        <member name="M:WebLib.Excel.SetCellBorder(System.Int32,System.Int32,NPOI.SS.UserModel.BorderStyle)">
+            <summary>
+            設定單一儲存格的邊框樣式
+            </summary>
+        </member>
+        <member name="M:WebLib.Excel.SetRangeOuterBorder(System.Int32,System.Int32,System.Int32,System.Int32,NPOI.SS.UserModel.BorderStyle)">
+            <summary>
+            設定一個儲存格範圍的外圍邊框樣式
+            </summary>
+        </member>
+        <member name="M:WebLib.Excel.SetRangeOuterBorder(NPOI.SS.Util.CellRangeAddress,NPOI.SS.UserModel.BorderStyle)">
+            <summary>
+            設定一個儲存格範圍的外圍邊框樣式
+            </summary>
+        </member>
+        <member name="M:WebLib.Excel.SetRangeInnerGrid(System.Int32,System.Int32,System.Int32,System.Int32,NPOI.SS.UserModel.BorderStyle)">
+            <summary>
+            設定一個儲存格範圍的內部格線樣式 (處理速度慢且耗費資源，建議僅使用於小範圍！)
+            </summary>
+        </member>
+        <member name="M:WebLib.Excel.SetCellStyle(System.Int32,System.Int32,NPOI.SS.UserModel.ICellStyle)">
+            <summary>
+            設定儲存格樣式
+            </summary>
+            <param name="row">列</param>
+            <param name="col">行</param>
+            <param name="style">樣式</param>
+        </member>
+        <member name="M:WebLib.Excel.SetCellValue(System.Int32,System.Int32,System.Boolean,NPOI.SS.UserModel.ICellStyle)">
+            <summary>
+            設定儲存格的值
+            </summary>
+            <param name="row">列</param>
+            <param name="col">行</param>
+            <param name="value">值</param>
+            <param name="style">樣式</param>
+        </member>
+        <member name="M:WebLib.Excel.SetCellValue(System.Int32,System.Int32,System.DateTime,NPOI.SS.UserModel.ICellStyle)">
+            <summary>
+            設定儲存格的值
+            </summary>
+            <param name="row">列</param>
+            <param name="col">行</param>
+            <param name="value">值</param>
+            <param name="style">樣式</param>
+        </member>
+        <member name="M:WebLib.Excel.SetCellValue(System.Int32,System.Int32,System.Double,NPOI.SS.UserModel.ICellStyle)">
+            <summary>
+            設定儲存格的值
+            </summary>
+            <param name="row">列</param>
+            <param name="col">行</param>
+            <param name="value">值</param>
+            <param name="style">樣式</param>
+        </member>
+        <member name="M:WebLib.Excel.SetCellValue(System.Int32,System.Int32,NPOI.SS.UserModel.IRichTextString,NPOI.SS.UserModel.ICellStyle)">
+            <summary>
+            設定儲存格的值
+            </summary>
+            <param name="row">列</param>
+            <param name="col">行</param>
+            <param name="value">值</param>
+            <param name="style">樣式</param>
+        </member>
+        <member name="M:WebLib.Excel.SetCellValue(System.Int32,System.Int32,System.String,NPOI.SS.UserModel.ICellStyle)">
+            <summary>
+            設定儲存格的值
+            </summary>
+            <param name="row">列</param>
+            <param name="col">行</param>
+            <param name="value">值</param>
+            <param name="style">樣式</param>
+        </member>
+        <member name="M:WebLib.Excel.SetCellValue(System.Int32,System.Int32,System.Boolean)">
+            <summary>
+            設定儲存格的值
+            </summary>
+            <param name="row">列</param>
+            <param name="col">行</param>
+            <param name="value">值</param>
+        </member>
+        <member name="M:WebLib.Excel.SetCellValue(System.Int32,System.Int32,System.DateTime)">
+            <summary>
+            設定儲存格的值
+            </summary>
+            <param name="row">列</param>
+            <param name="col">行</param>
+            <param name="value">值</param>
+        </member>
+        <member name="M:WebLib.Excel.SetCellValue(System.Int32,System.Int32,System.Double)">
+            <summary>
+            設定儲存格的值
+            </summary>
+            <param name="row">列</param>
+            <param name="col">行</param>
+            <param name="value">值</param>
+        </member>
+        <member name="M:WebLib.Excel.SetCellValue(System.Int32,System.Int32,NPOI.SS.UserModel.IRichTextString)">
+            <summary>
+            設定儲存格的值
+            </summary>
+            <param name="row">列</param>
+            <param name="col">行</param>
+            <param name="value">值</param>
+        </member>
+        <member name="M:WebLib.Excel.SetCellValue(System.Int32,System.Int32,System.String)">
+            <summary>
+            設定儲存格的值
+            </summary>
+            <param name="row">列</param>
+            <param name="col">行</param>
+            <param name="value">值</param>
+        </member>
+        <member name="M:WebLib.Excel.SetCellFormula(System.Int32,System.Int32,System.String)">
+            <summary>
+            設定儲存格的公式 (最前方不要加上 "=")
+            </summary>
+            <param name="row">列</param>
+            <param name="col">行</param>
+            <param name="formula">公式</param>
+        </member>
+        <member name="M:WebLib.Excel.SetCellFormula(System.Int32,System.Int32,System.String,NPOI.SS.UserModel.ICellStyle)">
+            <summary>
+            設定儲存格的公式 (最前方不要加上 "=")
+            </summary>
+            <param name="row">列</param>
+            <param name="col">行</param>
+            <param name="formula">公式</param>
+            <param name="style">樣式</param>
+        </member>
+        <member name="M:WebLib.Excel.DrawLine(System.Int32,System.Int32,System.Int32,System.Int32,System.Int32,System.Int32,System.Int32,System.Int32,NPOI.SS.UserModel.LineStyle,System.Int32)">
+            <summary>
+            在工作表上畫線，從 (row1, col1) 的 (dx1, dy1) 點畫到 (row2, col2) 的 (dx2, dy2) 點
+            </summary>
+            <param name="lineStyle">線條類型</param>
+            <param name="lineWidth">線寬</param>
+        </member>
+        <member name="M:WebLib.Excel.DrawPicture(System.Int32,System.Int32,System.Int32,System.Int32,System.Int32,System.Int32,System.Int32,System.Int32,System.String)">
+            <summary>
+            在工作表上放置圖片，圖片範圍從 (row1, col1) 的 (dx1, dy1) 點到 (row2, col2) 的 (dx2, dy2) 點
+            </summary>
+            <param name="pictureFileName">圖檔名稱，必須是磁碟路徑</param>
+        </member>
+        <member name="M:WebLib.Excel.SetColumnWidthInChars(System.Int32,System.Int32)">
+            <summary>
+            設定欄寬 (單位為字數)
+            </summary>
+            <param name="col">欄</param>
+            <param name="widthInChars">字數</param>
+        </member>
+        <member name="M:WebLib.Excel.SetRowHeightInPoints(System.Int32,System.Int32)">
+            <summary>
+            設定列高 (單位為 Pt)
+            </summary>
+            <param name="row">列</param>
+            <param name="height">列高</param>
+        </member>
+        <member name="T:WebLib.StringReplacer">
+            <summary>
+            UI 字串替換器
+            </summary>
+        </member>
+        <member name="M:WebLib.StringReplacer.TravelControl(System.String,System.Web.UI.ControlCollection)">
+            <summary>
+            遍歷控制項集合，處理所有子控制項的字串替換
+            </summary>
+            <param name="langId">語言編號</param>
+            <param name="controls">控制項集合</param>
+        </member>
+        <member name="M:WebLib.StringReplacer.ReplaceControl(System.String,System.Web.UI.Control)">
+            <summary>
+            處理單一控制項的字串替換
+            </summary>
+            <param name="langId"></param>
+            <param name="control"></param>
+        </member>
+        <member name="M:WebLib.StringReplacer.DoTravelControl(System.String,System.Web.UI.ControlCollection)">
+            <summary>
+            遍歷控制項集合，處理所有子控制項的字串替換
+            </summary>
+            <param name="langId"></param>
+            <param name="controls"></param>
+        </member>
+        <member name="M:WebLib.StringReplacer.RegisterProcessor(System.Object,WebLib.ReplaceProcessor)">
+            <summary>
+            註冊額外的字串替換處理器
+            </summary>
+            <param name="instance">處理器負責處理的類別</param>
+            <param name="processor">處理器的實體</param>
+        </member>
+        <member name="T:WebLib.ReplaceProcessor">
+            <summary>
+            控制項串替換處理器之抽像類別，定義所有控制項串替換處理器之界面
+            </summary>
+        </member>
+        <member name="M:WebLib.ReplaceProcessor.Process(System.String,System.Web.UI.Control)">
+            <summary>
+            執行替換工作，這是抽象方法，必須由衍生類別來實現
+            </summary>
+        </member>
+        <member name="P:WebLib.ReplaceProcessor.UrlEncode">
+            <summary>
+            是否要做 UrlEncode
+            </summary>
+        </member>
+        <member name="T:WebLib.TextPropertyProcessor">
+            <summary>
+            Text 屬性替換處理器
+            </summary>
+        </member>
+        <member name="M:WebLib.TextPropertyProcessor.Process(System.String,System.Web.UI.Control)">
+            <summary>
+            執行替換工作
+            </summary>
+        </member>
+        <member name="T:WebLib.HeaderTextPropertyProcessor">
+            <summary>
+            HeaderText 屬性替換處理器
+            </summary>
+        </member>
+        <member name="M:WebLib.HeaderTextPropertyProcessor.Process(System.String,System.Web.UI.Control)">
+            <summary>
+            執行替換工作
+            </summary>
+        </member>
+        <member name="T:WebLib.ValuePropertyProcessor">
+            <summary>
+            Value 屬性替換處理器
+            </summary>
+        </member>
+        <member name="M:WebLib.ValuePropertyProcessor.Process(System.String,System.Web.UI.Control)">
+            <summary>
+            執行替換工作
+            </summary>
+        </member>
+        <member name="T:WebLib.LabelControlProcessor">
+            <summary>
+            Label 控制項替換處理器
+            </summary>
+        </member>
+        <member name="M:WebLib.LabelControlProcessor.Process(System.String,System.Web.UI.Control)">
+            <summary>
+            執行替換工作
+            </summary>
+        </member>
+        <member name="T:WebLib.ButtonControlProcessor">
+            <summary>
+            Button 控制項替換處理器
+            </summary>
+        </member>
+        <member name="M:WebLib.ButtonControlProcessor.Process(System.String,System.Web.UI.Control)">
+            <summary>
+            執行替換工作
+            </summary>
+        </member>
+        <member name="T:WebLib.GridViewControlProcessor">
+            <summary>
+            GridView 控制項替換處理器
+            </summary>
+        </member>
+        <member name="M:WebLib.GridViewControlProcessor.Process(System.String,System.Web.UI.Control)">
+            <summary>
+            執行替換工作
+            </summary>
+        </member>
+        <member name="T:WebLib.MenuControlProcessor">
+            <summary>
+            Menu 控制項替換處理器
+            </summary>
+        </member>
+        <member name="M:WebLib.MenuControlProcessor.Process(System.String,System.Web.UI.Control)">
+            <summary>
+            執行替換工作
+            </summary>
+        </member>
+        <member name="T:WebLib.ItemsPropertyProcessor">
+            <summary>
+            Items 屬性替換處理器
+            </summary>
+        </member>
+        <member name="M:WebLib.ItemsPropertyProcessor.Process(System.String,System.Web.UI.Control)">
+            <summary>
+            執行替換工作
+            </summary>
+        </member>
+        <member name="T:WebLib.ErrorMessagePropertyProcessor">
+            <summary>
+            ErrorMessage 屬性替換處理器
+            </summary>
+        </member>
+        <member name="M:WebLib.ErrorMessagePropertyProcessor.Process(System.String,System.Web.UI.Control)">
+            <summary>
+            執行替換工作
+            </summary>
+        </member>
+        <member name="T:WebLib.GridViewRowControlProcessor">
+            <summary>
+            GridViewRow 控制項替換處理器
+            </summary>
+        </member>
+        <member name="M:WebLib.GridViewRowControlProcessor.Process(System.String,System.Web.UI.Control)">
+            <summary>
+            執行替換工作
+            </summary>
+        </member>
+        <member name="T:WebLib.ImageProcessor">
+            <summary>
+            Image ImageUrl 屬性替換處理器
+            </summary>
+        </member>
+        <member name="M:WebLib.ImageProcessor.Process(System.String,System.Web.UI.Control)">
+            <summary>
+            執行替換工作
+            </summary>
+        </member>
+        <member name="T:WebLib.WebLib_GridViewPagerProcessor">
+            <summary>
+            處理 GridViewPager 內文字的多國語替換工作
+            </summary>
+        </member>
+        <member name="M:WebLib.WebLib_GridViewPagerProcessor.Process(System.String,System.Web.UI.Control)">
+            <summary>
+            執行替換工作
+            </summary>
+        </member>
+        <member name="T:WebLib.StringTable">
+            <summary>
+            字串表查詢類別
+            </summary>
+        </member>
+        <member name="F:WebLib.StringTable.Insert">
+            <summary>
+            設定找不到字串表時，要不要新增資料
+            </summary>
+        </member>
+        <member name="F:WebLib.StringTable.ByPass">
+            <summary>
+            設定是否要跳過搜尋字串表的動作
+            </summary>
+        </member>
+        <member name="M:WebLib.StringTable.GetString(System.String,System.String)">
+            <summary>
+            查詢字串表
+            </summary>
+        </member>
+        <member name="M:WebLib.StringTable.GetString(System.Web.UI.Page,System.String)">
+            <summary>
+            查詢字串表
+            </summary>
+        </member>
+        <member name="M:WebLib.StringTable.GetString(System.String)">
+            <summary>
+            查詢字串表
+            </summary>
+        </member>
+        <member name="M:WebLib.StringTable.LoadStringTable">
+            <summary>
+            載入字串表
+            </summary>
+        </member>
+        <member name="M:WebLib.StringTable.Reload">
+            <summary>
+            重新載入字串表
+            </summary>
+        </member>
+        <member name="T:WebLib.TextExtensions">
+            <summary>
+            跟字串有關的擴充方法
+            </summary>
+        </member>
+        <member name="M:WebLib.TextExtensions.DecodedText(System.Web.UI.WebControls.TextBox)">
+            <summary>
+            TextBox 的擴充方法，回傳把前端替換之後的 &amp;lt; 與 &amp;gt; 還原之後的 Text
+            </summary>
+            <param name="control"></param>
+            <returns></returns>
+        </member>
+        <member name="M:WebLib.TextExtensions.DecodedValue(System.Web.UI.WebControls.HiddenField)">
+            <summary>
+            HiddenField 的擴充方法，回傳把前端替換之後的 &amp;lt; 與 &amp;gt; 還原之後的 Value
+            </summary>
+            <param name="control"></param>
+            <returns></returns>
+        </member>
+        <member name="M:WebLib.TextExtensions.HtmlEncodedString(System.String)">
+            <summary>
+            取得 HtmlEncode 後的 Text
+            </summary>
+            <param name="s"></param>
+            <returns></returns>
+        </member>
+        <member name="M:WebLib.TextExtensions.HtmlDecodedString(System.String)">
+            <summary>
+            取得 HtmlDecode 後的 Text
+            </summary>
+            <param name="s"></param>
+            <returns></returns>
+        </member>
+        <member name="T:WebLib.CrExport">
+            <summary>
+            將 Crystal Report 報表匯出成檔案或是匯出至 HttpResponse
+            </summary>
+        </member>
+        <member name="M:WebLib.CrExport.AddParameter(System.String,System.Object)">
+            <summary>
+            增加一個報表參數值設定
+            </summary>
+            <param name="key">報表參數名稱</param>
+            <param name="value">報表參數的值</param>
+        </member>
+        <member name="M:WebLib.CrExport.RemoveParameter(System.String)">
+            <summary>
+            移除一個報表參數設定
+            </summary>
+            <param name="key">要移除的報表參數名稱</param>
+        </member>
+        <member name="M:WebLib.CrExport.ClearParameters">
+            <summary>
+            清除報表參數設定
+            </summary>
+        </member>
+        <member name="M:WebLib.CrExport.LoadReport(System.String,System.String)">
+            <summary>
+            載入報表格式檔，並設定資料來源，報表參數
+            </summary>
+            <param name="reportFileName">報表格式檔名稱</param>
+            <param name="dataFileName">報表資料檔名稱</param>
+        </member>
+        <member name="M:WebLib.CrExport.CloseReport">
+            <summary>
+            關閉報表，以釋放報表檔案及資料檔案資源
+            </summary>
+        </member>
+        <member name="M:WebLib.CrExport.SaveAsDoc(System.String)">
+            <summary>
+            存成 Word 檔
+            </summary>
+            <param name="outFileName">檔案名稱</param>
+        </member>
+        <member name="M:WebLib.CrExport.SaveAsXls(System.String)">
+            <summary>
+            存成 Excel 檔
+            </summary>
+            <param name="outFileName">檔案名稱</param>
+        </member>
+        <member name="M:WebLib.CrExport.SaveAsPdf(System.String)">
+            <summary>
+            存成 PDF 檔
+            </summary>
+            <param name="outFileName">檔案名稱</param>
+        </member>
+        <member name="M:WebLib.CrExport.SaveAsHtml(System.String)">
+            <summary>
+            存成 HTML 檔
+            </summary>
+            <param name="outFileName">檔案名稱</param>
+        </member>
+        <member name="M:WebLib.CrExport.WebExportAsDoc(System.Web.HttpResponse)">
+            <summary>
+            以 Word 格式匯出至 HttpResponse，讓 Web 使用者可以直接開啟或儲存檔案
+            </summary>
+            <param name="response">匯出目的的 HttpResponse 物件</param>
+        </member>
+        <member name="M:WebLib.CrExport.WebExportAsDoc(System.Web.HttpResponse,System.String)">
+            <summary>
+            以 Word 格式匯出至 HttpResponse，讓 Web 使用者可以直接開啟或儲存檔案
+            </summary>
+            <param name="response">匯出目的的 HttpResponse 物件</param>
+            <param name="outFileName">輸出至用戶端時要呈現的檔案名稱</param>
+        </member>
+        <member name="M:WebLib.CrExport.WebExportAsXls(System.Web.HttpResponse)">
+            <summary>
+            以 Excel 格式匯出至 HttpResponse，讓 Web 使用者可以直接開啟或儲存檔案
+            </summary>
+            <param name="response">匯出目的的 HttpResponse 物件</param>
+        </member>
+        <member name="M:WebLib.CrExport.WebExportAsXls(System.Web.HttpResponse,System.String)">
+            <summary>
+            以 Excel 格式匯出至 HttpResponse，讓 Web 使用者可以直接開啟或儲存檔案
+            </summary>
+            <param name="response">匯出目的的 HttpResponse 物件</param>
+            <param name="outFileName">輸出至用戶端時要呈現的檔案名稱</param>
+        </member>
+        <member name="M:WebLib.CrExport.WebExportAsPdf(System.Web.HttpResponse)">
+            <summary>
+            以 PDF 格式匯出至 HttpResponse，讓 Web 使用者可以直接開啟或儲存檔案
+            </summary>
+            <param name="response">匯出目的的 HttpResponse 物件</param>
+        </member>
+        <member name="M:WebLib.CrExport.WebExportAsPdf(System.Web.HttpResponse,System.String)">
+            <summary>
+            以 PDF 格式匯出至 HttpResponse，讓 Web 使用者可以直接開啟或儲存檔案
+            </summary>
+            <param name="response">匯出目的的 HttpResponse 物件</param>
+            <param name="outFileName">輸出至用戶端時要呈現的檔案名稱</param>
+        </member>
+        <member name="P:WebLib.CrExport.Document">
+            <summary>
+            報表物件，可作為 ReportViewer 的 ReportSource
+            </summary>
+        </member>
+        <member name="P:WebLib.CrExport.ReportDocument">
+            <summary>
+            報表物件
+            </summary>
+        </member>
+        <member name="M:WebLib.CrExport.SetParamValue">
+            <summary>
+            設定報表參數
+            </summary>
+        </member>
+        <member name="T:WebLib.DeleteFileService">
+            <summary>
+            檔案定時清除服務
+            </summary>
+        </member>
+        <member name="P:WebLib.DeleteFileService.Interval">
+            <summary>
+            檔案刪除間隔時間，單位為秒。預設值為 600 秒
+            </summary>
+        </member>
+        <member name="P:WebLib.DeleteFileService.FileAgeToDelete">
+            <summary>
+            要刪除多久之前的檔案，單位為秒。預設值為 600 秒
+            </summary>
+        </member>
+        <member name="P:WebLib.DeleteFileService.Enabled">
+            <summary>
+            設定或取得檔案定時清除服務是否啟動
+            </summary>
+        </member>
+        <member name="P:WebLib.DeleteFileService.DeletePatterns">
+            <summary>
+            <para>欲清除的檔案路徑及檔案名稱，檔案名稱可以使用萬用字元</para>
+            <para>需要多個檔案路徑及檔案名稱時，請將所需的檔案路徑及檔案名稱一一加入</para>
+            <para>例如：c:\temp\*.mdb 表示要清除 c:\temp 目錄下的 *.mdb</para>
+            </summary>
+        </member>
+        <member name="M:WebLib.DeleteFileService.DoDeleteFile(System.Object,System.Timers.ElapsedEventArgs)">
+            <summary>
+            實際執行刪除的動作
+            </summary>
+        </member>
+        <member name="T:WebLib.MailService">
+            <summary>
+            郵件傳送服務
+            </summary>
+        </member>
+        <member name="P:WebLib.MailService.CheckInterval">
+            <summary>
+            每隔多久檢查是否有郵件需要發送(秒，預設值 = 10)
+            </summary>
+        </member>
+        <member name="P:WebLib.MailService.SendInterval">
+            <summary>
+            兩封郵件發送的間隔時間 (毫秒，預設值 = 1000)
+            </summary>
+        </member>
+        <member name="P:WebLib.MailService.SendCountPerInterval">
+            <summary>
+            每次最多發送幾封郵件，避免一次大量發信，被郵件伺服器擋掉 (預設值 = 10)
+            </summary>
+        </member>
+        <member name="P:WebLib.MailService.LogPath">
+            <summary>
+            郵件發送 Log 檔的存放位置，必須是實體路徑
+            </summary>
+        </member>
+        <member name="M:WebLib.ResponseOutput.WriteFile(System.Web.HttpContext,System.String)">
+            <summary>
+            將檔案經由 Response 送至用戶端
+            </summary>
+            <param name="cnx">当前页面的 HttpContext</param>
+            <param name="fileName">要寫出檔案的實體路徑</param>
+        </member>
+        <member name="M:WebLib.ResponseOutput.WriteFile(System.Web.HttpContext,System.String,System.String)">
+            <summary>
+            將檔案經由 Response 送至用戶端
+            </summary>
+            <param name="cnx">当前页面的 HttpContext</param>
+            <param name="fileName">要寫出檔案的實體路徑</param>
+            <param name="outFileName">要呈現出的檔案名稱</param>
+        </member>
+        <member name="M:WebLib.ResponseOutput.WriteStream(System.Web.HttpContext,System.IO.MemoryStream,System.String)">
+            <summary>
+            將串流經由 Response 送至用戶端
+            </summary>
+            <param name="cnx">当前页面的 HttpContext</param>
+            <param name="s">包含要输出内容的 Stream</param>
+            <param name="outFileName">要呈現出的檔案名稱</param>
+        </member>
+        <member name="M:WebLib.ResponseOutput.WriteByte(System.Web.HttpContext,System.Byte[],System.String)">
+            <summary>
+            將 byte[] 經由 Response 送至用戶端
+            </summary>
+            <param name="cnx">当前页面的 HttpContext</param>
+            <param name="buffer">包含要输出内容的 byte[]</param>
+            <param name="outFileName">要呈現出的檔案名稱</param>
+        </member>
+        <member name="T:WebLib.MDBExport">
+            <summary>
+            將 DataSet 的內容匯出成為 MDB 資料庫檔案
+            </summary>
+        </member>
+        <member name="M:WebLib.MDBExport.ExportToMDB(System.Data.DataTable,System.String,System.String,System.Boolean,System.Boolean,System.Boolean)">
+            <summary>
+            將 DataTable 的內容匯出至 MDB
+            </summary>
+            <param name="sourceData">欲匯出內容的 DataTable</param>
+            <param name="fileName">匯出的 MDB 檔案名稱，需包含路徑</param>
+            <param name="tableName">MDB 中的 Table 名稱</param>
+            <param name="newFile">是否建立新的 MDB 檔案</param>
+            <param name="randomSuffix">是否在 MDB 檔案名稱之後加上隨機字尾，傳入 true 時，一定會建立新的檔案</param>
+            <param name="appendData">是否附加資料至原有的 Table</param>
+            <returns>MDB 檔案名稱</returns>
+        </member>
+        <member name="M:WebLib.MDBExport.ExportToMDB(System.Data.DataTable,System.String,System.String)">
+            <summary>
+            將 DataTable 的內容匯出至 MDB
+            </summary>
+            <param name="sourceData">欲匯出內容的 DataTable</param>
+            <param name="fileName">匯出的 MDB 檔案名稱，需包含路徑</param>
+            <param name="tableName">MDB 中的 Table 名稱</param>
+            <returns>MDB 檔案名稱</returns>
+        </member>
+        <member name="M:WebLib.MDBExport.ExportToMDB(System.Data.DataTable,System.String,System.String,System.Boolean)">
+            <summary>
+            將 DataTable 的內容匯出至 MDB
+            </summary>
+            <param name="sourceData">欲匯出內容的 DataTable</param>
+            <param name="fileName">匯出的 MDB 檔案名稱，需包含路徑</param>
+            <param name="tableName">MDB 中的 Table 名稱</param>
+            <param name="newFile">是否建立新的 MDB 檔案</param>
+            <returns>MDB 檔案名稱</returns>
+        </member>
+        <member name="M:WebLib.MDBExport.GetRealFileName">
+            <summary>
+            為 MDB 檔案名稱加上隨機字尾
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:WebLib.MDBExport.CreateMDB">
+            <summary>
+            建立新的 MDB 資料檔案
+            </summary>
+        </member>
+        <member name="M:WebLib.MDBExport.OpenMDB">
+            <summary>
+            開啟新建立的 MDB 資料檔案
+            </summary>
+        </member>
+        <member name="M:WebLib.MDBExport.CloseMDB">
+            <summary>
+            關閉 MDB 資料檔案
+            </summary>
+        </member>
+        <member name="M:WebLib.MDBExport.DropTable">
+            <summary>
+            刪除 MDB 資料表
+            </summary>
+        </member>
+        <member name="M:WebLib.MDBExport.TableExist">
+            <summary>
+            檢查 Table 是否存在
+            </summary>
+            <returns>Table 是否存在</returns>
+        </member>
+        <member name="M:WebLib.MDBExport.CreateTable">
+            <summary>
+            建立新的 MDB 資料表
+            </summary>
+        </member>
+        <member name="M:WebLib.MDBExport.TransferData">
+            <summary>
+            將資料從 source DataTable 倒到 MDB Table
+            </summary>
+        </member>
+        <member name="T:WebLib.CharSetConverter">
+            <summary>
+            做為字碼轉換工具
+            </summary>
+        </member>
+        <member name="M:WebLib.CharSetConverter.LCMapString(System.Int32,System.Int32,System.String,System.Int32,System.String,System.Int32)">
+            <summary>
+            使用OS的kernel.dll做為簡繁轉換工具，只要有裝OS就可以使用，不用額外引用dll，但只能做逐字轉換，無法進行詞意的轉換
+            <para>所以無法將電腦轉成計算機</para>
+            </summary>
+        </member>
+        <member name="M:WebLib.CharSetConverter.ToSimplified(System.String)">
+            <summary>
+            繁體轉簡體
+            </summary>
+            <param name="pSource">要轉換的繁體字：體</param>
+            <returns>轉換後的簡體字：体</returns>
+        </member>
+        <member name="M:WebLib.CharSetConverter.ToTraditional(System.String)">
+            <summary>
+            簡體轉繁體
+            </summary>
+            <param name="pSource">要轉換的繁體字：体</param>
+            <returns>轉換後的簡體字：體</returns>
+        </member>
+        <member name="P:WebLib.DateTextBox.ValueClientID">
+            <summary>
+            取得裡面存放輸入值的 TextBox 的 ClientID
+            </summary>
+        </member>
+        <member name="P:WebLib.DateTextBox.TextBoxWidth">
+            <summary>
+            內含 TextBox 的寬度
+            </summary>
+        </member>
+        <member name="M:WebLib.DateTextBox.RecreateChildControls">
+            <summary>
+            重新建立子控制項
+            </summary>
+        </member>
+        <member name="M:WebLib.DateTextBox.CreateChildControls">
+            <summary>
+            建立子控制項
+            </summary>
+        </member>
+        <member name="M:WebLib.DateTextBox.Render(System.Web.UI.HtmlTextWriter)">
+            <summary>
+            將控制項繪製成 Html 標籤
+            </summary>
+        </member>
+        <member name="P:WebLib.ValueCheckBox.CheckedValue">
+            <summary>
+            核取時的值
+            </summary>
+        </member>
+        <member name="P:WebLib.ValueCheckBox.UncheckedValue">
+            <summary>
+            未核取時的值
+            </summary>
+        </member>
+        <member name="P:WebLib.ValueCheckBox.Value">
+            <summary>
+            值，當核取時，為 CheckedValue；未核取時，為 UncheckedValue
+            </summary>
+        </member>
+        <member name="M:WebLib.AddressEditor.FillCounty">
+            <summary>
+            填入縣市項目
+            </summary>
+        </member>
+        <member name="M:WebLib.AddressEditor.FillTownship(System.Int32)">
+            <summary>
+            填入鄉鎮市區項目
+            </summary>
+            <param name="countyIndex">縣市的ItemIndex</param>
+        </member>
+        <member name="M:WebLib.AddressEditor.RecreateChildControls">
+            <summary>
+            重新建立子控制項
+            </summary>
+        </member>
+        <member name="M:WebLib.AddressEditor.CreateChildControls">
+            <summary>
+            建立子控制項
+            </summary>
+        </member>
+        <member name="M:WebLib.AddressEditor.OnPreRender(System.EventArgs)">
+            <summary>
+            預先繪製動作
+            </summary>
+        </member>
+        <member name="M:WebLib.AddressEditor.Render(System.Web.UI.HtmlTextWriter)">
+            <summary>
+            將控制項繪製成 Html 標籤
+            </summary>
+        </member>
+        <member name="T:WebLib.ZipCodeData">
+            <summary>
+            提供縣市、鄉鎮市區、郵遞區號資料的類別
+            </summary>
+        </member>
+        <member name="P:WebLib.LookupTextBox.ValueClientID">
+            <summary>
+            取得裡面存放輸入值的 TextBox 的 ClientID
+            </summary>
+        </member>
+        <member name="P:WebLib.LookupTextBox.TextBoxWidth">
+            <summary>
+            內含 TextBox 的寬度
+            </summary>
+        </member>
+        <member name="M:WebLib.LookupTextBox.RecreateChildControls">
+            <summary>
+            重新建立子控制項
+            </summary>
+        </member>
+        <member name="M:WebLib.LookupTextBox.CreateChildControls">
+            <summary>
+            建立子控制項
+            </summary>
+        </member>
+        <member name="M:WebLib.LookupTextBox.Render(System.Web.UI.HtmlTextWriter)">
+            <summary>
+            將控制項繪製成 Html 標籤
+            </summary>
+        </member>
+        <member name="T:WebLib.FormBase">
+            <summary>
+            Web Form 的基礎類別
+            </summary>
+        </member>
+        <member name="M:WebLib.FormBase.AddTabButton(System.Web.UI.WebControls.MultiView,System.Int32,System.Web.UI.WebControls.IButtonControl,System.Boolean)">
+            <summary>
+            將 MultiView, ViewIndex, Button 關聯起來
+            </summary>
+            <param name="multiView"></param>
+            <param name="tabIndex"></param>
+            <param name="button"></param>
+            <param name="tabVisableWhenNotActive">當 Button 關聯到的 View 不是目前顯示的 View 時，Button 是否顯示</param>
+        </member>
+        <member name="M:WebLib.FormBase.AddTabButton(System.Web.UI.WebControls.MultiView,System.Web.UI.WebControls.View,System.Web.UI.WebControls.IButtonControl,System.Boolean)">
+            <summary>
+            將 MultiView, View, Button 關聯起來
+            </summary>
+            <param name="multiView"></param>
+            <param name="view"></param>
+            <param name="button"></param>
+            <param name="tabVisableWhenNotActive">當 Button 關聯到的 View 不是目前顯示的 View 時，Button 是否顯示</param>
+        </member>
+        <member name="M:WebLib.FormBase.SetTabButtonSelected(System.Web.UI.WebControls.IButtonControl,System.Boolean)">
+            <summary>
+            設定 TabButton 的 CssClass，以標示出目前選取到的 TabButton
+            </summary>
+        </member>
+        <member name="M:WebLib.FormBase.ActivateTab(System.Web.UI.WebControls.MultiView,System.Int32)">
+            <summary>
+            改變 MultiView 要顯示的 ViewIndex
+            </summary>
+        </member>
+        <member name="M:WebLib.FormBase.ActivateTab(System.Web.UI.WebControls.MultiView,System.Web.UI.WebControls.View)">
+            <summary>
+            改變 MultiView 要顯示的 View
+            </summary>
+        </member>
+        <member name="M:WebLib.FormBase.ActivateTabButton(System.Web.UI.WebControls.MultiView,System.Int32)">
+            <summary>
+            高亮 TabButton
+            </summary>
+            <param name="multiView"></param>
+            <param name="viewIndex"></param>
+        </member>
+        <member name="M:WebLib.FormBase.TabButtonClick(System.Object,System.EventArgs)">
+            <summary>
+            處理 Tab 按鈕按下時的切頁動作
+            </summary>
+        </member>
+        <member name="M:WebLib.FormBase.AfterChangeTab">
+            <summary>
+            以 AddTabButton 串連的 MultiView 與 Button 觸發換頁動作時，會執行方法，請在此方法中做需要的 DataBind
+            </summary>
+        </member>
+        <member name="P:WebLib.FormBase.UserLanguage">
+            <summary>
+            取得使用者選取的語言
+            </summary>
+        </member>
+        <member name="P:WebLib.FormBase.FunctionName">
+            <summary>
+            顯示子功能名稱
+            </summary>
+        </member>
+        <member name="P:WebLib.FormBase.FunctionID">
+            <summary>
+            顯示子功能ID
+            </summary>
+        </member>
+        <member name="P:WebLib.FormBase.HelpUrl">
+            <summary>
+            幫助網頁的 URL，可用 ~ 開頭的相對網頁路徑名稱，會呼叫 ResolveClientUrl 轉換成瀏覽器使用的 URL
+            </summary>
+        </member>
+        <member name="P:WebLib.FormBase.UserId">
+            <summary>
+            目前登入的員工編號
+            </summary>
+        </member>
+        <member name="P:WebLib.FormBase.RoleId">
+            <summary>
+            員工群組編號
+            </summary>
+        </member>
+        <member name="P:WebLib.FormBase.UserName">
+            <summary>
+            目前登入的員工姓名
+            </summary>
+        </member>
+        <member name="P:WebLib.FormBase.canInsert">
+            <summary>
+            是否能新增
+            </summary>
+        </member>
+        <member name="P:WebLib.FormBase.canUpdate">
+            <summary>
+            是否能更正
+            </summary>
+        </member>
+        <member name="P:WebLib.FormBase.canDelete">
+            <summary>
+            是否能刪除
+            </summary>
+        </member>
+        <member name="M:WebLib.FormBase.RegisterCalendarEvent(System.Web.UI.WebControls.WebControl,System.Web.UI.WebControls.WebControl,System.String,System.String)">
+            <summary>
+            把按鈕綁定日曆開啟動作
+            </summary>
+            <param name="button"></param>
+            <param name="textBox"></param>
+            <param name="separator"></param>
+            <param name="dateOrder"></param>
+        </member>
+        <member name="M:WebLib.FormBase.ClientShowMessage(System.String,System.String,System.Boolean)">
+            <summary>
+            在瀏覽器中使用 alert 顯示訊息
+            </summary>
+            <param name="message">要顯示的訊息</param>
+            <param name="url">關閉訊息之後要跳轉到的 url</param>
+            <param name="close">關閉訊息之後是否關閉分頁</param>
+        </member>
+        <member name="M:WebLib.FormBase.CloseWindow">
+            <summary>
+            關閉分頁
+            </summary>
+        </member>
+        <member name="M:WebLib.FormBase.CloseDialog">
+            <summary>
+            關閉呼叫 OpenDialog 出現的小窗
+            </summary>
+        </member>
+        <member name="P:WebLib.FormBase.PostBackSource">
+            <summary>
+            取得 PostBack 時觸發的物件名稱，或是以 Javascript 呼叫 __doPostBack 時的第一個參數
+            </summary>
+        </member>
+        <member name="P:WebLib.FormBase.PostBackArguments">
+            <summary>
+            取得 PostBack 時帶回的參數列，或是以 Javascript 呼叫 __doPostBack 時的第二個參數
+            </summary>
+        </member>
+        <member name="M:WebLib.FormBase.JsColor(System.Drawing.Color)">
+            <summary>
+            將 color 轉換成 CSS 的顏色字串
+            </summary>
+            <param name="tmpColor"></param>
+            <returns></returns>
+        </member>
+        <member name="M:WebLib.FormBase.GetOpenWindowJS(System.String,System.String,System.Object[])">
+            <summary>
+            回傳開新視窗用的 JavaScript，後面加上 return false，這是給按鈕的 OnClientClick 屬性使用的
+            </summary>
+            <param name="url">新視窗要開啟的 URL</param>
+            <param name="windowName">新視窗的名稱</param>
+            <param name="paramNameAndValue">
+            兩兩一組代表 query string 的變數與值，例如傳入 a,1,b,2 就會組成 a=1&amp;b=2 的 query string
+            </param>
+            <returns></returns>
+        </member>
+        <member name="M:WebLib.FormBase.GetOpenWindowJSNoReturn(System.String,System.String,System.Object[])">
+            <summary>
+            回傳開新視窗用的 JavaScript，後面不加上 return false，這是給註冊成頁面上執行的 JS 使用的
+            </summary>
+            <param name="url">新視窗要開啟的 URL</param>
+            <param name="windowName">新視窗的名稱</param>
+            <param name="paramNameAndValue">
+            兩兩一組代表 query string 的變數與值，例如傳入 a,1,b,2 就會組成 a=1&amp;b=2 的 query string
+            </param>
+            <returns></returns>
+        </member>
+        <member name="M:WebLib.FormBase.GetOpenPageJS(System.String,System.String,System.Object[])">
+            <summary>
+            回傳開新視窗用的 JavaScript，後面加上 return false，這是給按鈕的 OnClientClick 屬性使用的
+            </summary>
+            <param name="url">新視窗要開啟的 URL</param>
+            <param name="windowName">新視窗的名稱</param>
+            <param name="paramNameAndValue">
+            兩兩一組代表 query string 的變數與值，例如傳入 a,1,b,2 就會組成 a=1&amp;b=2 的 query string
+            </param>
+            <returns></returns>
+        </member>
+        <member name="M:WebLib.FormBase.GetOpenPageJSNoReturn(System.String,System.String,System.Object[])">
+            <summary>
+            回傳開新視窗用的 JavaScript，後面不加上 return false，這是給註冊成頁面上執行的 JS 使用的
+            </summary>
+            <param name="url">新視窗要開啟的 URL</param>
+            <param name="windowName">新視窗的名稱</param>
+            <param name="paramNameAndValue">
+            兩兩一組代表 query string 的變數與值，例如傳入 a,1,b,2 就會組成 a=1&amp;b=2 的 query string
+            </param>
+            <returns></returns>
+        </member>
+        <member name="M:WebLib.FormBase.GetOpenDialogJS(System.String,System.String,System.Int32,System.Int32,System.Boolean,System.Boolean,System.Object[])">
+            <summary>
+            回傳開小窗用的 JavaScript
+            </summary>
+            <param name="url">要開啟的 URL</param>
+            <param name="title">小窗的標題文字</param>
+            <param name="width">小窗的寬度</param>
+            <param name="height">小窗的高度</param>
+            <param name="refreshOnClose">關閉小窗之後是否重新整理頁面</param>
+            <param name="paramNameAndValue">
+            兩兩一組代表 query string 的變數與值，例如傳入 a,1,b,2 就會組成 a=1&amp;b=2 的 query string
+            </param>
+            <param name="preventPostback">是否阻止 POSTBACK，true = 按鈕的 OnClientClick 使用，false = 註冊到頁面上使用</param>
+            <returns></returns>
+        </member>
+        <member name="M:WebLib.FormBase.GetOpenJS(System.String,System.String,System.Boolean,System.Boolean,System.Object[])">
+            <summary>
+            回傳開新視窗用的 JavaScript
+            </summary>
+            <param name="url">新視窗要開啟的 URL</param>
+            <param name="windowName">新視窗的名稱</param>
+            <param name="openNewWindow">是否開新視窗，true 開新視窗，false 開新分頁</param>
+            <param name="addReturnFalse">是否在後面加上 return false</param>
+            <param name="paramNameAndValue">
+            兩兩一組代表 query string 的變數與值，例如傳入 a,1,b,2 就會組成 a=1&amp;b=2 的 query string
+            </param>
+            <returns></returns>
+        </member>
+        <member name="M:WebLib.FormBase.SetObjectDataSourceEvent(System.Web.UI.ControlCollection)">
+            <summary>
+            遞迴尋找 ObjectDataSource 物件，掛上事件
+            </summary>
+            <param name="controls"></param>
+        </member>
+        <member name="P:WebLib.FormBase.Form_View">
+            <summary>
+            畫面上的 FormView 元件，設定此屬性將會掛上事件
+            </summary>
+        </member>
+        <member name="P:WebLib.FormBase.Grid_View">
+            <summary>
+            畫面上的 GridView 元件，設定此屬性將會掛上事件
+            </summary>
+        </member>
+        <member name="P:WebLib.FormBase.FormView_DataSource">
+            <summary>
+            FormView 的 DataSource 元件，設定此屬性將會掛上事件
+            </summary>
+        </member>
+        <member name="P:WebLib.FormBase.GridView_DataSource">
+            <summary>
+            GridView 的 DataSource 元件，設定此屬性將會掛上事件
+            </summary>
+        </member>
+        <member name="M:WebLib.FormBase.CalcFields(System.Object,System.Web.UI.WebControls.ObjectDataSourceMethodEventArgs)">
+            <summary>
+            存檔時，需要做計算的話，寫在這裡
+            </summary>
+        </member>
+        <member name="M:WebLib.FormBase.FormView_DataSource_Inserting(System.Object,System.Web.UI.WebControls.ObjectDataSourceMethodEventArgs)">
+            <summary>
+            FormView 的 DataSource 新增存檔之前
+            </summary>
+        </member>
+        <member name="M:WebLib.FormBase.FormView_DataSource_Inserted(System.Object,System.Web.UI.WebControls.ObjectDataSourceStatusEventArgs)">
+            <summary>
+            FormView 的 DataSource 新增存檔之後
+            </summary>
+        </member>
+        <member name="M:WebLib.FormBase.FormView_DataSource_Updating(System.Object,System.Web.UI.WebControls.ObjectDataSourceMethodEventArgs)">
+            <summary>
+            FormView 的 DataSource 更正存檔之前
+            </summary>
+        </member>
+        <member name="M:WebLib.FormBase.FormView_DataSource_Updated(System.Object,System.Web.UI.WebControls.ObjectDataSourceStatusEventArgs)">
+            <summary>
+            FormView 的 DataSource 更正存檔之後
+            </summary>
+        </member>
+        <member name="M:WebLib.FormBase.FormView_DataSource_Deleting(System.Object,System.Web.UI.WebControls.ObjectDataSourceMethodEventArgs)">
+            <summary>
+            FormView 的 DataSource 刪除存檔之前
+            </summary>
+        </member>
+        <member name="M:WebLib.FormBase.FormView_DataSource_Deleted(System.Object,System.Web.UI.WebControls.ObjectDataSourceStatusEventArgs)">
+            <summary>
+            FormView 的 DataSource 刪除存檔之後
+            </summary>
+        </member>
+        <member name="M:WebLib.FormBase.GridView_DataSource_Selected(System.Object,System.Web.UI.WebControls.ObjectDataSourceStatusEventArgs)">
+            <summary>
+            GridView 的 DataSource SELECT 之後的事件
+            </summary>
+        </member>
+        <member name="M:WebLib.FormBase.FormView_ItemCommand(System.Object,System.Web.UI.WebControls.FormViewCommandEventArgs)">
+            <summary>
+            FormView 按鈕命令
+            </summary>
+        </member>
+        <member name="M:WebLib.FormBase.CheckInput(System.Collections.Specialized.IOrderedDictionary)">
+            <summary>
+            檢查資料正確性 FormView 存檔前會呼叫
+            </summary>
+        </member>
+        <member name="M:WebLib.FormBase.FormView_ItemInserting(System.Object,System.Web.UI.WebControls.FormViewInsertEventArgs)">
+            <summary>
+            FormView 資料新增存檔前事件
+            </summary>
+        </member>
+        <member name="M:WebLib.FormBase.FormView_ItemInserted(System.Object,System.Web.UI.WebControls.FormViewInsertedEventArgs)">
+            <summary>
+            FormView 新增存檔後事件
+            </summary>
+        </member>
+        <member name="M:WebLib.FormBase.FormView_ItemDeleting(System.Object,System.Web.UI.WebControls.FormViewDeleteEventArgs)">
+            <summary>
+            FormView 資料刪除前事件
+            </summary>
+        </member>
+        <member name="M:WebLib.FormBase.FormView_ItemDeleted(System.Object,System.Web.UI.WebControls.FormViewDeletedEventArgs)">
+            <summary>
+            FormView 刪除後事件
+            </summary>
+        </member>
+        <member name="M:WebLib.FormBase.FormView_ItemUpdating(System.Object,System.Web.UI.WebControls.FormViewUpdateEventArgs)">
+            <summary>
+            FormView 更正存檔前事件
+            </summary>
+        </member>
+        <member name="M:WebLib.FormBase.FormView_ItemUpdated(System.Object,System.Web.UI.WebControls.FormViewUpdatedEventArgs)">
+            <summary>
+            FormView 更正存檔後事件
+            </summary>
+        </member>
+        <member name="M:WebLib.FormBase.FormView_ModeChanging(System.Object,System.Web.UI.WebControls.FormViewModeEventArgs)">
+            <summary>
+            FormView 模式切換前事件
+            </summary>
+        </member>
+        <member name="M:WebLib.FormBase.FormView_ModeChanged(System.Object,System.EventArgs)">
+            <summary>
+            FormView 模式切換後事件
+            </summary>
+        </member>
+        <member name="M:WebLib.FormBase.FormView_InsertDataBound(System.Object,System.EventArgs)">
+            <summary>
+            FormView 切換至新增模式，資料繫結後事件
+            </summary>
+        </member>
+        <member name="M:WebLib.FormBase.FormView_EditDataBound(System.Object,System.EventArgs)">
+            <summary>
+            FormView 切換至更正模式，資料繫結後事件
+            </summary>
+        </member>
+        <member name="M:WebLib.FormBase.FormView_ReadOnlyDataBound(System.Object,System.EventArgs)">
+            <summary>
+            FormView 切換至瀏覽模式，資料繫結後事件
+            </summary>
+        </member>
+        <member name="M:WebLib.FormBase.FormView_DataBinding(System.Object,System.EventArgs)">
+            <summary>
+            FormView 資料繫結事件
+            </summary>
+        </member>
+        <member name="M:WebLib.FormBase.FormView_DataBound(System.Object,System.EventArgs)">
+            <summary>
+            FormView 資料繫結後事件
+            </summary>
+        </member>
+        <member name="M:WebLib.FormBase.ProcessEmptyInput(System.Collections.Specialized.IOrderedDictionary,System.Type)">
+            <summary>
+            處理 FormView 與 GridView 中輸入的空字串，避免觸發型別轉換錯誤，請於 ItemInserting 與 ItemUpdating 事件中呼叫
+            </summary>
+            <param name="values">ItemInserting 事件的 e.Values / ItemUpdating 事件的 e.NewValues</param>
+            <param name="type">ObjectDataSource 的 DataItemType</param>
+        </member>
+        <member name="M:WebLib.FormBase.GridView_DataBound(System.Object,System.EventArgs)">
+            <summary>
+            GridView 資料繫結之後的事件
+            </summary>
+        </member>
+        <member name="M:WebLib.FormBase.GridView_PageIndexChanged(System.Object,System.EventArgs)">
+            <summary>
+            GridView 換頁之後的事件
+            </summary>
+        </member>
+        <member name="M:WebLib.FormBase.GridView_RowDataBound(System.Object,System.Web.UI.WebControls.GridViewRowEventArgs)">
+            <summary>
+            GridView 每列資料繫結後事件，設定滑鼠指到上面的顏色
+            </summary>
+        </member>
+        <member name="M:WebLib.FormBase.GridView_SelectedIndexChanged(System.Object,System.EventArgs)">
+            <summary>
+            GridView 目前紀錄變更後事件，設定每列滑鼠指到上面的顏色
+            </summary>
+        </member>
+        <member name="M:WebLib.FormBase.ResponseWriteFile(System.String)">
+            <summary>
+            向 Resonse 輸出檔案
+            </summary>
+            <param name="fileName"></param>
+        </member>
+        <member name="M:WebLib.FormBase.ResponseWriteStream(System.IO.MemoryStream,System.String)">
+            <summary>
+            向 Resonse 輸出檔案
+            </summary>
+            <param name="s">承載檔案內容的 Stream</param>
+            <param name="fileName">輸出的檔案名稱</param>
+        </member>
+        <member name="M:WebLib.FormBase.ResponseWriteByte(System.Byte[],System.String)">
+            <summary>
+            向 Resonse 輸出檔案
+            </summary>
+            <param name="b">承載檔案內容的 byte[]</param>
+            <param name="fileName">輸出的檔案名稱</param>
+        </member>
+        <member name="P:WebLib.FormBase.HtmlEncodeBeforeSubmit">
+            <summary>
+            頁面送交之前是否將輸入文字編碼
+            </summary>        
+        </member>
+        <member name="P:WebLib.FormBase.RemoveHtmlTagBeforeSubmit">
+            <summary>
+            頁面送交之前是否清除 HTML Tag
+            </summary>        
+        </member>
+        <member name="T:WebLib.TabData">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="T:WebLib.WDropDownList">
+            <summary>
+            這個 DropDownLost 會屏蔽掉 DtaaBinding 時發生的 Exception
+            </summary>
+        </member>
+        <member name="M:WebLib.WDropDownList.PerformDataBinding(System.Collections.IEnumerable)">
+            <summary>
+            處理 DataBinding
+            </summary>
+        </member>
+        <member name="T:WebLib.WordTable">
+            <summary>
+            詞彙表類別
+            </summary>
+        </member>
+    </members>
+</doc>

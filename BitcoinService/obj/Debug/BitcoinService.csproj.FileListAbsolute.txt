@@ -1,0 +1,4 @@
+C:\Users\LDH\Documents\Visual Studio 2015\Projects\DemoRESTService\BitcoinService\obj\Debug\BitcoinService.csprojResolveAssemblyReference.cache
+C:\Users\LDH\Documents\Visual Studio 2015\Projects\DemoRESTService\BitcoinService\obj\Debug\BitcoinService.ProjectInstaller.resources
+C:\Users\LDH\Documents\Visual Studio 2015\Projects\DemoRESTService\BitcoinService\obj\Debug\BitcoinService.Service1.resources
+C:\Users\LDH\Documents\Visual Studio 2015\Projects\DemoRESTService\BitcoinService\obj\Debug\BitcoinService.csproj.GenerateResource.Cache
