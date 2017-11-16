@@ -21,7 +21,7 @@ namespace BitcoinService
         #region service vars
         private Timer timer;
         string connectionStringName = "Development";
-        DAC_SYSSETTING sysSetting = new DAC_SYSSETTING();
+       
         public bool BTCEnable { get; private set; } = DAC.GetBoolean(ConfigurationManager.AppSettings["BTCEnable"]);
         public string BTCServiceDates = "";
         public string BTCServiceTime = "";
@@ -58,6 +58,7 @@ namespace BitcoinService
             }
             //else
             //    Logger.Log(BaseLogPath, LogType.Day, "[BTC Service] Timmer Trigged");
+            DAC_SYSSETTING sysSetting = new DAC_SYSSETTING();
 
             if (BTCEnable)
             {
@@ -118,41 +119,25 @@ namespace BitcoinService
             Logger.Log(BaseLogPath, LogType.Day, "[ Bitcoin Service ] Stopped by Admin Manually");
         }
 
+       public static string HttpGet(string url)
+        {
+            HttpWebRequest req = WebRequest.Create(url) as HttpWebRequest;
+            string result = null;
+            using (HttpWebResponse resp = req.GetResponse() as HttpWebResponse)
+            {
+                StreamReader reader = new StreamReader(resp.GetResponseStream());
+                result = reader.ReadToEnd();
+            }
+            return result;
+        }
+
         private void BTCBGroundWorker_DoWork(object sender, DoWorkEventArgs e)
         {
             //RestAddrURL
             var url = DAC.GetString(ConfigurationManager.AppSettings["RestAddrURL"]);
-            var DATA = "";
-            HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
-            request.Method = "GET";
-            request.ContentType = "application/text";
-            request.ContentLength = DATA.Length;
-            using (Stream webStream = request.GetRequestStream())
-            using (StreamWriter requestWriter = new StreamWriter(webStream, Encoding.UTF8))
-            {
-                requestWriter.Write(DATA);
-            }
+            var DATA = HttpGet(url);
 
-            try
-            {
-                WebResponse webResponse = request.GetResponse();
-                using (Stream webStream = webResponse.GetResponseStream())
-                {
-                    if (webStream != null)
-                    {
-                        using (StreamReader responseReader = new StreamReader(webStream))
-                        {
-                            string response = responseReader.ReadToEnd();
-                            Console.Out.WriteLine(response);
-                        }
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                Console.Out.WriteLine("-----------------");
-                Console.Out.WriteLine(ex.Message);
-            }
+            Logger.Log(RESTLogPath, LogType.Day, "[ Retrived data from Bitcoin API Service ] : ["+ DATA + " ] ");
         }
     }
 }

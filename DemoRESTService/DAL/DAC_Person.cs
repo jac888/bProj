@@ -24,7 +24,7 @@ namespace DemoRESTService.DAL
         private string _insert = "FIRSTNAME, LASTNAME,PAYRATE,STARTDATE,ENDDATE, DB_APPNO, DB_CRDAT, DB_CRUSR, DB_TRDAT, DB_TRUSR";
         private string _insertValue = "@FIRSTNAME, @LASTNAME, @PAYRATE, @STARTDATE, @ENDDATE, @DB_APPNO, @DB_CRDAT, @DB_CRUSR, @DB_TRDAT, @DB_TRUSR";
 
-        string connectionString = ConfigurationManager.ConnectionStrings["Debug"].ConnectionString.ToString();
+        string connectionString = ConfigurationManager.ConnectionStrings["Development"].ConnectionString.ToString();
         
 
         public DAC_Person()
