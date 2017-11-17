@@ -1,10 +1,12 @@
 ﻿using DemoRESTService.DAL;
+using DemoRESTService.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Web.Http;
+using System.Web.Script.Serialization;
 using static DemoRESTService.DAL.DAC_BTCAddr;
 
 namespace DemoRESTService.Controllers
@@ -47,25 +49,16 @@ namespace DemoRESTService.Controllers
         public string newGet(string apikey)
         {
             var vaild = 0;
-            var addressList = "";
+            var json = "";
+            DAC_BTCAddrList list = new DAC_BTCAddrList();
             if (!string.IsNullOrEmpty(apikey))
             {
                 vaild = dac.verifyKey(apikey);
                 if (vaild > 0)
-                {
-                    var list = dac.SelectAllTAddress();
-                    for (int i = 0; i < list.Count; i++)
-                    {
-                        if (addressList == "")
-                            addressList += list[i].ADDRESSV;
-                        else
-                            addressList += "," + list[i].ADDRESSV;
-                    }
-                }
-                else
-                    addressList = "Your Key is invalid!";
+                    list = dac.SelectAllTAddress();                  
+                json = new JavaScriptSerializer().Serialize(list);
             }
-            return addressList;
+            return json;
         }
 
         // POST: api/BTCAddr
