@@ -87,3 +87,4 @@ C:\Users\LDH\Documents\Visual Studio 2015\Projects\DemoRESTService\DemoRESTServi
 C:\Users\LDH\Documents\Visual Studio 2015\Projects\DemoRESTService\DemoRESTService\bin\zh-Hans\System.Web.WebPages.Deployment.resources.dll
 C:\Users\LDH\Documents\Visual Studio 2015\Projects\DemoRESTService\DemoRESTService\obj\Debug\DemoRESTService.dll
 C:\Users\LDH\Documents\Visual Studio 2015\Projects\DemoRESTService\DemoRESTService\obj\Debug\DemoRESTService.pdb
+C:\Users\LDH\Documents\Visual Studio 2015\Projects\DemoRESTService\DemoRESTService\obj\Debug\DemoRESTService.csprojResolveAssemblyReference.cache

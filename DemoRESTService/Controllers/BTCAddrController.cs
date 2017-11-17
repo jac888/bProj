@@ -41,6 +41,33 @@ namespace DemoRESTService.Controllers
             }
             return addressList;
         }
+
+        [ActionName("newGet")]
+        [HttpGet]
+        public string newGet(string apikey)
+        {
+            var vaild = 0;
+            var addressList = "";
+            if (!string.IsNullOrEmpty(apikey))
+            {
+                vaild = dac.verifyKey(apikey);
+                if (vaild > 0)
+                {
+                    var list = dac.SelectAllTAddress();
+                    for (int i = 0; i < list.Count; i++)
+                    {
+                        if (addressList == "")
+                            addressList += list[i].ADDRESSV;
+                        else
+                            addressList += "," + list[i].ADDRESSV;
+                    }
+                }
+                else
+                    addressList = "Your Key is invalid!";
+            }
+            return addressList;
+        }
+
         // POST: api/BTCAddr
         public void Post([FromBody]string value)
         {
