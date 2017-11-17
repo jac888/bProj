@@ -119,7 +119,7 @@ namespace BitcoinService
             Logger.Log(BaseLogPath, LogType.Day, "[ Bitcoin Service ] Stopped by Admin Manually");
         }
 
-       public static string HttpGet(string url)
+       public static string HttpGet(string url) // Web api get wtih httpwebrequest and handle exception
         {
             HttpWebRequest req = WebRequest.Create(url) as HttpWebRequest;
             string result = null;
@@ -192,8 +192,6 @@ namespace BitcoinService
             {
                 Logger.Log(RESTLogPath, LogType.Day, " Web API has problem! ");
             }
-
-
         }
     }
 }
